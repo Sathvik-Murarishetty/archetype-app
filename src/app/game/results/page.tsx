@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import ArchetypeFlipCard from "@/components/ArchetypeFlipCard";
 
 const archetypes = [
     { name: "Advancer", description: "Motivated by progress and time-based challenge" },
@@ -32,7 +33,7 @@ export default function ResultsPage() {
 
     return (
         <div className="min-h-screen bg-white px-6 py-10 flex flex-col items-center">
-            <h1 className="text-4xl font-bold mb-4">Your Archetype Result</h1>
+            <h1 className="text-4xl font-bold mb-4 text-black">Your Archetype Result</h1>
 
             {dominant && (
                 <div className="text-center mb-10">
@@ -43,30 +44,32 @@ export default function ResultsPage() {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
-                {times.map(({ name, time }) => {
-                    const description = archetypes.find((a) => a.name === name)?.description;
+            {/* First Row (4 Cards) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                {times.slice(0, 4).map(({ name, time }) => {
+                    const description = archetypes.find((a) => a.name === name)?.description || "";
                     return (
-                        <div
+                        <ArchetypeFlipCard
                             key={name}
-                            className="group [perspective:1000px] w-64 h-48 relative"
-                        >
-                            <div className="relative w-full h-full transition-transform duration-500 transform-style-preserve-3d group-hover:rotate-y-180">
-                                {/* Front */}
-                                <div className="absolute w-full h-full bg-white border rounded-xl shadow-md flex flex-col items-center justify-center backface-hidden">
-                                    <h3 className="text-lg font-bold text-blue-600">{name}</h3>
-                                    <p className="text-md text-black mt-2">{time.toFixed(2)}s</p>
-                                </div>
+                            name={name}
+                            time={time}
+                            description={description}
+                        />
+                    );
+                })}
+            </div>
 
-                                {/* Back */}
-                                <div
-                                    className="absolute w-full h-full bg-blue-100 border rounded-xl shadow-md text-center flex flex-col items-center justify-center px-4 backface-hidden"
-                                    style={{ transform: "rotateY(180deg)" }}
-                                >
-                                    <p className="text-sm text-gray-700">{description}</p>
-                                </div>
-                            </div>
-                        </div>
+            {/* Second Row (3 Cards) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+                {times.slice(4).map(({ name, time }) => {
+                    const description = archetypes.find((a) => a.name === name)?.description || "";
+                    return (
+                        <ArchetypeFlipCard
+                            key={name}
+                            name={name}
+                            time={time}
+                            description={description}
+                        />
                     );
                 })}
             </div>

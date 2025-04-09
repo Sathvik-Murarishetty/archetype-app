@@ -70,8 +70,8 @@ export default function FlourishersGame() {
             </div>
 
             <div className="w-full max-w-lg text-center p-6 border rounded-xl shadow mb-6">
-                <p className="text-xl font-medium">Flourisher Level Task Placeholder</p>
-                <p className="text-sm text-gray-500 mt-2">Your game logic goes here.</p>
+                <p className="text-xl font-medium">Flourisher Task</p>
+                <p className="text-sm text-gray-500 mt-2">the game goes here.</p>
             </div>
 
             <button
