@@ -6,9 +6,10 @@ import { motion } from "framer-motion";
 type ArchetypeCardProps = {
     title: string;
     description: string;
+    onStart?: () => void;
 };
 
-export default function ArchetypeCard({ title, description }: ArchetypeCardProps) {
+export default function ArchetypeCard({ title, description, onStart }: ArchetypeCardProps) {
     const [flipped, setFlipped] = useState(false);
 
     return (
@@ -31,10 +32,18 @@ export default function ArchetypeCard({ title, description }: ArchetypeCardProps
 
                     {/* Back */}
                     <div
-                        className="absolute w-full h-full backface-hidden flex flex-col items-center justify-center text-center bg-blue-100 text-sm px-4 rounded-xl"
+                        className="absolute w-full h-full backface-hidden flex flex-col items-center justify-center text-center bg-#F4F2F2 text-sm px-4 rounded-xl"
                         style={{ transform: "rotateY(180deg)" }}
                     >
-                        <p>{description}</p>
+                        <p className="mb-4">{description}</p>
+                        {onStart && (
+                            <button
+                                onClick={onStart}
+                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                            >
+                                Start
+                            </button>
+                        )}
                     </div>
                 </motion.div>
             </div>

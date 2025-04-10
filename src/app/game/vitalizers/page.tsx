@@ -44,7 +44,7 @@ export default function VitalizersGame() {
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
             localStorage.setItem("Vitalizers", totalTime.toString());
-            router.push("/game/hobbyists");
+            router.push("/");
         }
     };
 

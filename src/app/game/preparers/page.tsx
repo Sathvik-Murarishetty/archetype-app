@@ -44,7 +44,7 @@ export default function PreparersGame() {
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
             localStorage.setItem("Preparers", totalTime.toString());
-            router.push("/game/flourishers");
+            router.push("/");
         }
     };
 

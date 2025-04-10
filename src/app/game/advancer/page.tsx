@@ -46,7 +46,7 @@ export default function AdvancerGame() {
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
             localStorage.setItem("Advancer", totalTime.toString());
-            router.push("/game/fixer");
+            router.push("/");
         }
     };
 

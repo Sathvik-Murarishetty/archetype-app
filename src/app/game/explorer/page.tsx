@@ -44,7 +44,7 @@ export default function ExplorerGame() {
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
             localStorage.setItem("Explorer", totalTime.toString());
-            router.push("/game/preparers");
+            router.push("/");
         }
     };
 

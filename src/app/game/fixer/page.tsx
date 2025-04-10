@@ -44,7 +44,7 @@ export default function FixerGame() {
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
             localStorage.setItem("Fixer", totalTime.toString());
-            router.push("/game/explorer");
+            router.push("/");
         }
     };
 
@@ -78,8 +78,8 @@ export default function FixerGame() {
             </div>
 
             <div className="w-full max-w-lg text-center p-6 border rounded-xl shadow mb-6">
-                <p className="text-xl font-medium">Level {level} Task</p>
-                <p className="text-sm text-gray-500 mt-2">the game goes here.</p>
+                <p className="text-xl font-medium">Level {level} Task Placeholder</p>
+                <p className="text-sm text-gray-500 mt-2">Your game logic goes here.</p>
             </div>
 
             <button

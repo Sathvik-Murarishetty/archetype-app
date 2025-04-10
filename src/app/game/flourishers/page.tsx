@@ -40,7 +40,7 @@ export default function FlourishersGame() {
     const completeLevel = () => {
         const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
         localStorage.setItem("Flourishers", totalTime.toString());
-        router.push("/game/vitalizers");
+        router.push("/");
     };
 
     return (
