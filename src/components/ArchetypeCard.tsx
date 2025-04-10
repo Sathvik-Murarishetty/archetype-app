@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 type ArchetypeCardProps = {
-    title: string;
+    title: React.ReactNode;
     description: string;
     onStart?: () => void;
 };
