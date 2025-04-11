@@ -3,6 +3,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import HobbyistCanvas from "@/components/HobbyistCanvas";
+
+const prompts = [
+    ["A cat on a skateboard", "A rocket made of pizza", "A tree with sunglasses"],
+    ["A robot playing violin", "A flying fish with wings", "A donut city"],
+    ["A penguin on a surfboard", "A sandwich castle", "A snail on a rocket"],
+    ["A dancing dinosaur", "A moon made of cheese", "A dragon reading a book"],
+    ["A dog driving a car", "A space station in a teacup", "A flower riding a bike"]
+];
 
 export default function HobbyistsGame() {
     const router = useRouter();
@@ -11,9 +20,12 @@ export default function HobbyistsGame() {
     const [currentTime, setCurrentTime] = useState(0);
     const [countdown, setCountdown] = useState(3);
     const [showCountdown, setShowCountdown] = useState(true);
+    const [canProceed, setCanProceed] = useState(false);
+    const [showPrompt, setShowPrompt] = useState(true);
+    const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!showCountdown) return;
+        if (!showCountdown || showPrompt) return;
 
         const interval = setInterval(() => {
             setCountdown((prev) => prev - 1);
@@ -26,7 +38,7 @@ export default function HobbyistsGame() {
         }
 
         return () => clearInterval(interval);
-    }, [countdown, showCountdown]);
+    }, [countdown, showCountdown, showPrompt]);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -39,22 +51,45 @@ export default function HobbyistsGame() {
     }, [startTime]);
 
     const nextLevel = () => {
+        setCanProceed(false);
+        setSelectedPrompt(null);
+        setShowPrompt(true);
         if (level < 5) {
             setLevel((prev) => prev + 1);
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
             localStorage.setItem("Hobbyists", totalTime.toString());
-            router.push("/");
+            router.push("/results");
         }
     };
 
     return (
         <div className="relative min-h-screen flex flex-col items-center bg-white px-6 pt-10">
-            {showCountdown && (
+            {(showCountdown || showPrompt) && (
                 <div className="absolute inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-                    <div className="text-white text-6xl font-bold animate-pulse">
-                        {countdown > 0 ? countdown : "Go!"}
-                    </div>
+                    {showPrompt ? (
+                        <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-md">
+                            <h2 className="text-xl font-bold mb-4">Choose what to draw:</h2>
+                            <div className="flex flex-col gap-3">
+                                {prompts[level - 1].map((prompt, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => {
+                                            setSelectedPrompt(prompt);
+                                            setShowPrompt(false);
+                                        }}
+                                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                    >
+                                        {prompt}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-white text-6xl font-bold animate-pulse">
+                            {countdown > 0 ? countdown : "Go!"}
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -78,14 +113,19 @@ export default function HobbyistsGame() {
             </div>
 
             <div className="w-full max-w-lg text-center p-6 border rounded-xl shadow mb-6">
-                <p className="text-xl font-medium">Level {level} Task</p>
-                <p className="text-sm text-gray-500 mt-2">the game goes here.</p>
+                <p className="text-xl font-medium text-gray-800 mb-4">
+                    {selectedPrompt ? selectedPrompt : `Level ${level} Drawing Task`}
+                </p>
+                <HobbyistCanvas onDraw={() => setCanProceed(true)} />
             </div>
 
             <button
+                disabled={!canProceed || showCountdown || showPrompt}
                 onClick={nextLevel}
-                disabled={showCountdown}
-                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
+                className={`px-6 py-3 rounded-lg transition ${!canProceed || showCountdown || showPrompt
+                        ? "bg-gray-400 text-white cursor-not-allowed"
+                        : "bg-green-600 text-white hover:bg-green-700"
+                    }`}
             >
                 {level === 5 ? "Complete" : "Next Level"}
             </button>
