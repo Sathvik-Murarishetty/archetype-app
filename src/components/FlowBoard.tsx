@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-const COLORS = ["red", "blue", "green", "orange"];
 const SIZE = 5;
 
 const initialPoints = {
