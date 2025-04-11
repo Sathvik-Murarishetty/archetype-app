@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import FlowBoard from "@/components/FlowBoard";
 
 export default function FixerGame() {
     const router = useRouter();
@@ -79,7 +80,7 @@ export default function FixerGame() {
 
             <div className="w-full max-w-lg text-center p-6 border rounded-xl shadow mb-6">
                 <p className="text-xl font-medium">Level {level} Task Placeholder</p>
-                <p className="text-sm text-gray-500 mt-2">Your game logic goes here.</p>
+                <p className="text-sm text-gray-500 mt-2"><FlowBoard/></p>
             </div>
 
             <button

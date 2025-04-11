@@ -69,7 +69,7 @@ export default function HobbyistsGame() {
                 <div className="absolute inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
                     {showPrompt ? (
                         <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-md">
-                            <h2 className="text-xl font-bold mb-4">Choose what to draw:</h2>
+                            <h2 className="text-xl font-bold mb-4 text-black">Choose what to draw:</h2>
                             <div className="flex flex-col gap-3">
                                 {prompts[level - 1].map((prompt, idx) => (
                                     <button
