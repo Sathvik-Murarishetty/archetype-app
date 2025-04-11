@@ -129,15 +129,12 @@ export default function Home() {
           );
         })}
       </div>
-
-      {Object.values(times).every(t => t !== "-- sec") && (
         <button
           onClick={handleReset}
           className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
         >
           Reset All
         </button>
-      )}
       {fastest && <Confetti recycle={false} numberOfPieces={400} />}
       {fastest && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white shadow-lg rounded-xl px-10 py-6 text-center scale-150 border border-green-500">
