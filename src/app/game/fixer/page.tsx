@@ -5,13 +5,71 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import FlowBoard from "@/components/FlowBoard";
 
+const levelConfigs = [
+    {
+        blue: [
+            { row: 0, col: 3 },
+            { row: 1, col: 5 },
+        ],
+        yellow: [
+            { row: 0, col: 5 },
+            { row: 2, col: 3 },
+        ],
+        red: [
+            { row: 2, col: 2 },
+            { row: 4, col: 4 },
+        ],
+        green: [
+            { row: 1, col: 3 },
+            { row: 4, col: 3 },
+        ],
+    },
+    {
+        blue: [
+            { row: 0, col: 0 },
+            { row: 1, col: 1 },
+        ],
+        red: [
+            { row: 0, col: 1 },
+            { row: 2, col: 1 },
+        ],
+        yellow: [
+            { row: 2, col: 0 },
+            { row: 1, col: 4 },
+        ],
+        green: [
+            { row: 3, col: 1 },
+            { row: 5, col: 0 },
+        ],
+    },
+    {
+        blue: [
+            { row: 0, col: 5 },
+            { row: 4, col: 3 },
+        ],
+        yellow: [
+            { row: 2, col: 1 },
+            { row: 3, col: 5 },
+        ],
+        red: [
+            { row: 2, col: 2 },
+            { row: 4, col: 4 },
+        ],
+        green: [
+            { row: 4, col: 1 },
+            { row: 3, col: 3 },
+        ],
+    },
+];
+
 export default function FixerGame() {
     const router = useRouter();
-    const [level, setLevel] = useState(1);
+    const [level, setLevel] = useState(0);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [currentTime, setCurrentTime] = useState(0);
     const [countdown, setCountdown] = useState(3);
     const [showCountdown, setShowCountdown] = useState(true);
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         if (!showCountdown) return;
@@ -39,8 +97,8 @@ export default function FixerGame() {
         return () => clearInterval(timer);
     }, [startTime]);
 
-    const nextLevel = () => {
-        if (level < 3) {
+    const handleLevelComplete = () => {
+        if (level < levelConfigs.length - 1) {
             setLevel((prev) => prev + 1);
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
@@ -67,10 +125,10 @@ export default function FixerGame() {
                 <div className="flex-grow bg-gray-200 h-3 rounded-full overflow-hidden mr-4">
                     <div
                         className="bg-blue-600 h-full transition-all duration-300"
-                        style={{ width: `${(level / 3) * 100}%` }}
+                        style={{ width: `${((level + 1) / levelConfigs.length) * 100}%` }}
                     />
                 </div>
-                <span className="text-gray-700 text-sm font-semibold">{level}/3</span>
+                <span className="text-gray-700 text-sm font-semibold">{level + 1}/{levelConfigs.length}</span>
 
                 <div className="flex items-center ml-6">
                     <Image src="/timer-icon.png" alt="Timer" width={24} height={24} className="mr-2" />
@@ -78,18 +136,11 @@ export default function FixerGame() {
                 </div>
             </div>
 
-            <div className="w-full max-w-lg text-center p-6 border rounded-xl shadow mb-6">
-                <p className="text-xl font-medium">Level {level} Task Placeholder</p>
-                <p className="text-sm text-gray-500 mt-2"><FlowBoard/></p>
-            </div>
-
-            <button
-                onClick={nextLevel}
-                disabled={showCountdown}
-                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
-            >
-                {level === 3 ? "Complete" : "Next Level"}
-            </button>
+            <FlowBoard
+                levelConfig={levelConfigs[level]}
+                onProgress={setProgress}
+                onLevelComplete={handleLevelComplete}
+            />
         </div>
     );
 }
