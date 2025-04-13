@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import FlowBoard from "@/components/FlowBoard";
+import FlowFreeBoard from "@/components/FlowFreeBoard";
 
 const levelConfigs = [
     {
@@ -69,7 +69,6 @@ export default function FixerGame() {
     const [currentTime, setCurrentTime] = useState(0);
     const [countdown, setCountdown] = useState(3);
     const [showCountdown, setShowCountdown] = useState(true);
-    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         if (!showCountdown) return;
@@ -98,13 +97,15 @@ export default function FixerGame() {
     }, [startTime]);
 
     const handleLevelComplete = () => {
-        if (level < levelConfigs.length - 1) {
-            setLevel((prev) => prev + 1);
-        } else {
-            const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
-            localStorage.setItem("Fixer", totalTime.toString());
-            router.push("/");
-        }
+        setTimeout(() => {
+            if (level < levelConfigs.length - 1) {
+                setLevel((prev) => prev + 1);
+            } else {
+                const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
+                localStorage.setItem("Fixer", totalTime.toString());
+                router.push("/");
+            }
+        }, 500); // slight delay to let success state render
     };
 
     return (
@@ -136,10 +137,15 @@ export default function FixerGame() {
                 </div>
             </div>
 
-            <FlowBoard
-                levelConfig={levelConfigs[level]}
-                onProgress={setProgress}
-                onLevelComplete={handleLevelComplete}
+            <FlowFreeBoard
+                key={level}
+                gridSize={6}
+                colorPairs={Object.entries(levelConfigs[level]).map(([color, [from, to]]) => ({
+                    color,
+                    from: [from.row, from.col],
+                    to: [to.row, to.col],
+                }))}
+                onComplete={handleLevelComplete}
             />
         </div>
     );
