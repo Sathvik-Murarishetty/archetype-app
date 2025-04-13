@@ -44,20 +44,20 @@ const levelConfigs = [
     },
     {
         blue: [
-            { row: 0, col: 5 },
-            { row: 4, col: 3 },
+            { row: 0, col: 3 },
+            { row: 1, col: 5 },
         ],
         yellow: [
-            { row: 2, col: 1 },
-            { row: 3, col: 5 },
+            { row: 0, col: 5 },
+            { row: 2, col: 3 },
         ],
         red: [
             { row: 2, col: 2 },
             { row: 4, col: 4 },
         ],
         green: [
-            { row: 4, col: 1 },
-            { row: 3, col: 3 },
+            { row: 1, col: 3 },
+            { row: 4, col: 3 },
         ],
     },
 ];
