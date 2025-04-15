@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import SortableItem from "@/components/SortableItem";
 import Image from "next/image";
+import type { DragStartEvent, DragEndEvent } from "@dnd-kit/core";
 
 const allSteps = [
   "Decide the destination",
@@ -94,11 +95,11 @@ export default function PreparersLevel() {
     return array.sort(() => Math.random() - 0.5);
   }
 
-  function handleDragStart(event: any) {
-    setActiveId(event.active.id);
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(event.active.id as string);
   }
 
-  function handleDragEnd(event: any) {
+  function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over) {
       setActiveId(null);
@@ -106,8 +107,8 @@ export default function PreparersLevel() {
     }
 
     const list = sequence;
-    const oldIndex = list.indexOf(active.id);
-    const newIndex = list.indexOf(over.id);
+    const oldIndex = list.indexOf(active.id as string);
+    const newIndex = list.indexOf(over.id as string);
 
     if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
       const updated = arrayMove(sequence, oldIndex, newIndex);
@@ -117,6 +118,7 @@ export default function PreparersLevel() {
 
     setActiveId(null);
   }
+
 
   function checkCompletion(updated: string[]) {
     const filtered = updated.filter((step) => correctSequence.includes(step));
