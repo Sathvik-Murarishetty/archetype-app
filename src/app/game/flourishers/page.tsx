@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { HsvColorPicker } from "react-colorful";
+import { HsvColorPicker, HsvColor } from "react-colorful";
 
 const prompts = [
     {
@@ -58,8 +57,8 @@ export default function FlourishersGame() {
     const [level, setLevel] = useState(0);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [currentTime, setCurrentTime] = useState(0);
-    const [responses, setResponses] = useState<any[]>([]);
-    const [color, setColor] = useState("#ffcc80");
+    const [responses, setResponses] = useState<{ color: HsvColor; song: string; vibe: string; bonus: string }[]>([]);
+    const [color, setColor] = useState<HsvColor>({ h: 30, s: 0.5, v: 0.9 });
     const [song, setSong] = useState("");
     const [vibe, setVibe] = useState("");
     const [bonus, setBonus] = useState("");
@@ -88,7 +87,7 @@ export default function FlourishersGame() {
         const newResponse = { color, song, vibe, bonus };
         const updatedResponses = [...responses, newResponse];
         setResponses(updatedResponses);
-        setColor("#ffcc80");
+        setColor({ h: 30, s: 0.5, v: 0.9 });
         setSong("");
         setVibe("");
         setBonus("");

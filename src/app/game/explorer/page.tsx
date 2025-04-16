@@ -49,7 +49,7 @@ export default function ExplorerGame() {
         const x = (e.clientX - rect.left) * scaleX;
         const y = (e.clientY - rect.top) * scaleY;
 
-        imageRefs.current.forEach((img, index) => {
+        imageRefs.current.forEach((img) => {
             if (!img || found.has(img.alt)) return;
 
             const canvas = canvasRef.current;
@@ -116,7 +116,9 @@ export default function ExplorerGame() {
                     const isFound = found.has(id);
                     return (
                         <img
-                            ref={(el) => (imageRefs.current[i] = el)}
+                            ref={(el) => {
+                                imageRefs.current[i] = el;
+                            }}
                             key={id}
                             src={`/${id}`}
                             alt={id}
