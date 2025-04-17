@@ -1,148 +1,89 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import ArchetypeCard from "../components/ArchetypeCard";
-import Image from "next/image";
+import { useState } from "react";
+import Link from "next/link";
 
-const archetypes = [
-  { title: "Advancer", description: "Motivated by progress and time-based challenge" },
-  { title: "Fixer", description: "Solves problems with precision" },
-  { title: "Explorer", description: "Curious, trial-and-error learner" },
-  { title: "Preparers", description: "Plans everything in advance" },
-  { title: "Flourishers", description: "Loves creativity and patterns" },
-  { title: "Vitalizers", description: "Quick, energetic responder" },
-  { title: "Hobbyists", description: "Enjoys learning through play" },
-];
+export default function HomePage() {
+  const [flipped, setFlipped] = useState<{ [key: string]: boolean }>({});
 
-import Confetti from 'react-confetti';
-
-export default function Home() {
-  const router = useRouter();
-  const [times, setTimes] = useState<Record<string, string>>({});
-  const [fastest, setFastest] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loaded: Record<string, string> = {};
-    let minTime = Number.MAX_VALUE;
-    let minArchetype = null;
-
-    archetypes.forEach(({ title }) => {
-      const time = localStorage.getItem(title);
-      if (time) {
-        const parsed = parseFloat(time);
-        loaded[title] = `${parsed.toFixed(2)} sec`;
-        if (parsed < minTime) {
-          minTime = parsed;
-          minArchetype = title;
-        }
-      } else {
-        loaded[title] = "-- sec";
-      }
-    });
-
-    setTimes(loaded);
-    if (Object.values(loaded).every(t => t !== "-- sec")) {
-      setFastest(minArchetype);
-    }
-  }, []);
-
-  const handleStart = (title: string) => {
-    router.push(`/game/${title.toLowerCase()}`);
-  };
-
-  const handleReset = () => {
-    archetypes.forEach(({ title }) => localStorage.removeItem(title));
-    window.location.reload();
+  const toggleFlip = (key: string) => {
+    setFlipped((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-10 bg-white">
-      <h1 className="text-4xl font-bold mb-10 text-black">Learner Archetypes</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        {archetypes.slice(0, 4).map((arc) => {
-          const isCompleted = times[arc.title] !== "-- sec";
-          const isFastest = arc.title === fastest;
-          return (
-            <div
-              key={arc.title}
-              className={
-                isCompleted
-                  ? "opacity-50"
-                  : "bg-white text-white rounded-xl"
-              }
-            >
-              <ArchetypeCard
-                title={
-                  <div className="flex flex-col items-center">
-                    <div
-                      className="text-xl font-semibold"
-                      style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
-                    >
-                      {arc.title}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm mt-1">
-                      <Image src="/timer-icon.png" alt="timer" width={16} height={16} />
-                      <span>{times[arc.title]}</span>
-                    </div>
-                  </div>
-                }
-                description={arc.description}
-                onStart={isCompleted ? undefined : () => handleStart(arc.title)}
-              />
-            </div>
-          );
-        })}
+    <div className="min-h-screen bg-black text-white px-6 py-12 flex flex-col items-center">
+      <h1 className="text-4xl font-extrabold text-center mb-2">Skill up & Chill</h1>
+      <p className="text-lg text-gray-300 text-center mb-6">
+        Learn your style. Play your strengths.
+      </p>
+
+      <div className="max-w-3xl text-sm text-gray-300 text-center mb-12">
+        <p className="mb-4 font-semibold">What’s this all about?</p>
+        <p className="mb-4">
+          This toolkit is a playful, interactive journey that helps you figure out how you learn best – and what skills you bring to the table.
+          You’ll start by diving into quick mini-games representing 7 unique learning archetypes—from curious Explorers to goal-hungry Advancers.
+          Whichever game you complete fastest? That’s your dominant archetype. Boom – Level 1 complete.
+        </p>
+        <p className="mb-4">
+          Next, it’s time for Level 2: Your personal Transferable Skills Bingo. You’ll pick a card loaded with tasks linked to your archetype and
+          12 core real-world skills – like communication, creativity, leadership, and adaptability.
+        </p>
+        <p className="mb-4">Each task is a mini-adventure. Finish a row, shout “Bingo!”, and rack up proof of your powers.</p>
+        <p className="mb-4 font-semibold">The goal?</p>
+        <p>
+          To help you discover your learning superpowers and build a toolkit of skills that can take you anywhere—school, work, passion projects,
+          or the next big idea.
+        </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-        {archetypes.slice(4).map((arc) => {
-          const isCompleted = times[arc.title] !== "-- sec";
-          const isFastest = arc.title === fastest;
-          return (
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        {[
+          {
+            id: "archetypes",
+            front: "Learner Archetypes",
+            back: (
+              <div className="text-center">
+                <p className="text-sm mb-3">
+                  Learner archetypes are unique profiles that capture how individuals naturally absorb, process,
+                  and engage with learning based on their strengths and motivations.
+                </p>
+                <Link href="/game" className="inline-block mt-2 text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                  Know your Archetype!!
+                </Link>
+              </div>
+            ),
+          },
+          {
+            id: "skills",
+            front: "Transferable Skills",
+            back: (
+              <div className="text-sm text-center">
+                Transferable skills are versatile abilities—like communication, problem-solving, or teamwork—that you can apply
+                across different roles, careers, and life situations. They grow with you, no matter where you go.
+              </div>
+            ),
+          },
+        ].map((card) => (
+          <div
+            key={card.id}
+            onMouseEnter={() => toggleFlip(card.id)}
+            onMouseLeave={() => toggleFlip(card.id)}
+            className="relative w-72 h-48 [perspective:1000px] cursor-default"
+          >
             <div
-              key={arc.title}
-              className={
-                isCompleted
-                  ? "opacity-50"
-                  : "bg-white text-white rounded-xl"
-              }
+              className={`absolute inset-0 transition-transform duration-500 [transform-style:preserve-3d] ${flipped[card.id] ? "rotate-y-180" : ""
+                }`}
             >
-              <ArchetypeCard
-                title={
-                  <div className="flex flex-col items-center">
-                    <div
-                      className="text-xl font-semibold"
-                      style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
-                    >
-                      {arc.title}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm mt-1">
-                      <Image src="/timer-icon.png" alt="timer" width={16} height={16} />
-                      <span>{times[arc.title]}</span>
-                    </div>
-                  </div>
-                }
-                description={arc.description}
-                onStart={isCompleted ? undefined : () => handleStart(arc.title)}
-              />
+              <div className="absolute inset-0 bg-white text-black rounded-lg flex items-center justify-center text-lg font-semibold [backface-visibility:hidden]">
+                {card.front}
+              </div>
+              <div className="absolute inset-0 bg-gray-800 text-white rounded-lg p-4 flex flex-col items-center justify-center [backface-visibility:hidden] rotate-y-180">
+                {card.back}
+              </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
-        <button
-          onClick={handleReset}
-          className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
-        >
-          Reset All
-        </button>
-      {fastest && <Confetti recycle={false} numberOfPieces={400} />}
-      {fastest && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white shadow-lg rounded-xl px-10 py-6 text-center scale-150 border border-green-500">
-          <h2 className="text-2xl font-bold text-green-600 mb-2">Your Archetype</h2>
-          <p className="text-lg font-semibold text-black">{fastest}</p>
-        </div>
-      )}
-      {fastest && <Confetti recycle={false} numberOfPieces={400} />}
-    </main>
+    </div>
   );
 }
