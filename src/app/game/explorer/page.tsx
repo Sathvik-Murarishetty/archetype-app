@@ -11,10 +11,10 @@ const TOTAL_ITEMS = 30;
 
 /* ── groups shown under the progress bar ─────────────── */
 const CATEGORIES = [
-    { name: "Cactus", start: 2, end: 12, thumb: "/thumbs/cactus.png" }, // 11 items
-    { name: "Grass", start: 13, end: 18, thumb: "/thumbs/grass.png" }, //  6 items
-    { name: "Flower", start: 19, end: 23, thumb: "/thumbs/flower.png" }, //  5 items
-    { name: "Haystack", start: 24, end: 31, thumb: "/thumbs/haystack.png" }, //  8 items
+    { name: "Cactus", start: 2, end: 12, thumb: "/thumbs/Cactus.png" },
+    { name: "Grass", start: 13, end: 18, thumb: "/thumbs/Grass.png" },
+    { name: "Flower", start: 19, end: 23, thumb: "/thumbs/Flower.png" },
+    { name: "Haystack", start: 24, end: 31, thumb: "/thumbs/Haystack.png" },
 ] as const;
 
 export default function ExplorerGame() {
