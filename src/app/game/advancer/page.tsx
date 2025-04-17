@@ -39,7 +39,7 @@ export default function AdvancerGame() {
                 if (level === 4) {
                     const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
                     localStorage.setItem("Advancer", totalTime.toString());
-                    router.push("/");
+                    router.push("/game/");
                 } else {
                     setLevel((prev) => prev + 1);
                     setSelected(null);

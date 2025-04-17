@@ -112,7 +112,7 @@ export default function PreparersGame() {
       const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
       localStorage.setItem("Preparers", totalTime.toString());
       setTimeout(() => {
-        router.push("/");
+        router.push("/game/");
       }, 1500);
     }
   }

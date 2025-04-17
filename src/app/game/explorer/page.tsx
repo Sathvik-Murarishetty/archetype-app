@@ -98,7 +98,7 @@ export default function FlourishersGame() {
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
             localStorage.setItem("Flourishers", totalTime.toString());
-            router.push("/");
+            router.push("/game/");
         }
     };
 

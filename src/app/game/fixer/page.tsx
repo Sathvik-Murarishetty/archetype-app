@@ -86,7 +86,7 @@ export default function FixerGame() {
             } else {
                 const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
                 localStorage.setItem("Fixer", totalTime.toString());
-                router.push("/");
+                router.push("/game/");
             }
         }, 500);
     };

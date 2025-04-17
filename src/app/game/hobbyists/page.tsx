@@ -42,7 +42,7 @@ export default function HobbyistsGame() {
         } else {
             const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
             localStorage.setItem("Hobbyists", totalTime.toString());
-            router.push("/results");
+            router.push("/game/");
         }
     };
 
