@@ -52,34 +52,17 @@ const correctSequence = [
   "Unpack and rest",
 ];
 
-export default function PreparersLevel() {
+export default function PreparersGame() {
   const router = useRouter();
   const [startTime, setStartTime] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
-  const [countdown, setCountdown] = useState(3);
-  const [showCountdown, setShowCountdown] = useState(true);
+  const [showIntro, setShowIntro] = useState(true);
   const [pool, setPool] = useState(() => shuffle([...allSteps]));
   const [sequence, setSequence] = useState<string[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
 
   const sensors = useSensors(useSensor(PointerSensor));
-
-  useEffect(() => {
-    if (!showCountdown) return;
-
-    const interval = setInterval(() => {
-      setCountdown((prev) => prev - 1);
-    }, 1000);
-
-    if (countdown === 0) {
-      clearInterval(interval);
-      setShowCountdown(false);
-      setStartTime(Date.now());
-    }
-
-    return () => clearInterval(interval);
-  }, [countdown, showCountdown]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -119,7 +102,6 @@ export default function PreparersLevel() {
     setActiveId(null);
   }
 
-
   function checkCompletion(updated: string[]) {
     const filtered = updated.filter((step) => correctSequence.includes(step));
     if (
@@ -143,16 +125,56 @@ export default function PreparersLevel() {
     setCurrentTime(0);
   }
 
+  if (showIntro) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg text-center md:w-[650px]">
+          <h2 className="text-2xl font-bold mb-2 text-black">Preparers</h2>
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">The Planifestors</h3>
+          <p className="text-sm text-gray-700 mb-4">
+            Planifestors are dreamers with calendars. They set alarms for their dreams and make lists for their passions.
+            They&apos;re prepping for college, side hustles, and their future dog all at once. Strategy is their comfort zone.
+          </p>
+          <div className="flex justify-center mb-4">
+            <Image src="/preparers.png" alt="emoji" width={80} height={80} />
+          </div>
+          <div className="grid grid-cols-2 gap-4 mb-4 text-left">
+            <div>
+              <p className="text-sm font-bold text-black">STRENGTHS</p>
+              <ul className="text-sm text-gray-700 list-disc list-inside">
+                <li>Incredibly organised and structured</li>
+                <li>Deep sense of purpose</li>
+                <li>Great at long-term planning</li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-sm font-bold text-black">WEAKNESSES</p>
+              <ul className="text-sm text-gray-700 list-disc list-inside">
+                <li>Can fear failure and procrastinate starting</li>
+                <li>Gets thrown off when plans change</li>
+                <li>May over-plan and under-execute</li>
+              </ul>
+            </div>
+          </div>
+          <p className="italic text-sm text-black mb-4">
+            “Manifesting the life, planning the checklist.”
+          </p>
+          <button
+            onClick={() => {
+              setShowIntro(false);
+              setStartTime(Date.now());
+            }}
+            className="bg-black text-white px-4 py-2 rounded"
+          >
+            Proceed
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen flex flex-col items-center bg-white px-6 pt-10 pb-10">
-      {showCountdown && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-          <div className="text-white text-6xl font-bold animate-pulse">
-            {countdown > 0 ? countdown : "Go!"}
-          </div>
-        </div>
-      )}
-
       <div className="w-full max-w-xl mb-4 text-center">
         <p className="text-3xl font-medium text-black">Preparers Archetype</p>
       </div>
@@ -180,7 +202,7 @@ export default function PreparersLevel() {
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex-1">
             <h2 className="text-lg font-semibold mb-2 text-black">All Steps</h2>
-            <div className="space-y-2">
+            <div className="space-y-2 text-sm">
               {pool.map((step) => (
                 <div
                   key={step}
@@ -202,7 +224,7 @@ export default function PreparersLevel() {
           <div className="w-full md:w-[400px]">
             <h2 className="text-lg font-semibold mb-2 text-black">Your Trip Plan</h2>
             <SortableContext items={sequence} strategy={verticalListSortingStrategy}>
-              <div className="space-y-2 min-h-[300px] border border-dashed rounded p-2">
+              <div className="space-y-2 border border-dashed rounded p-2 text-sm">
                 {sequence.map((step) => (
                   <SortableItem key={step} id={step} />
                 ))}
