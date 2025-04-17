@@ -64,13 +64,13 @@ export default function Home() {
                     const isCompleted = times[arc.title] !== "-- sec";
                     const isFastest = arc.title === fastest;
                     return (
-                        <div key={arc.title} className={isCompleted ? "opacity-50" : "bg-black text-white rounded-xl"}>
+                        <div key={arc.title} className={isCompleted ? "opacity-50" : "bg-white text-white rounded-xl"}>
                             <ArchetypeCard
                                 title={
                                     <div className="flex flex-col items-center">
                                         <div
                                             className="text-xl font-semibold"
-                                            style={{ color: isFastest ? "green" : isCompleted ? "#85CCA9" : undefined }}
+                                            style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
                                         >
                                             {arc.title}
                                         </div>
@@ -93,13 +93,13 @@ export default function Home() {
                     const isCompleted = times[arc.title] !== "-- sec";
                     const isFastest = arc.title === fastest;
                     return (
-                        <div key={arc.title} className={isCompleted ? "opacity-50" : "bg-black text-white rounded-xl"}>
+                        <div key={arc.title} className={isCompleted ? "opacity-50" : "bg-white text-white rounded-xl"}>
                             <ArchetypeCard
                                 title={
                                     <div className="flex flex-col items-center">
                                         <div
                                             className="text-xl font-semibold"
-                                            style={{ color: isFastest ? "green" : isCompleted ? "#85CCA9" : undefined }}
+                                            style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
                                         >
                                             {arc.title}
                                         </div>

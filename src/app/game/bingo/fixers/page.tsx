@@ -5,15 +5,15 @@ import Confetti from "react-confetti";
 import { useRouter } from "next/navigation";
 
 const skills = [
-    ["Present solutions with confidence", "Inspire team to reach goals", "Lead goal-oriented discussions", "Communicate decisions clearly", "Adapt messages based on progress", "Keep the team motivated through communication"],
-    ["Write goal-driven plans", "Document success stories", "Analyze progress in writing", "Write a persuasive plan", "Revise strategies based on feedback", "Write a clear project update"],
-    ["Listen to feedback on progress", "Hear team’s aspirations", "Listen for insights on strategy", "Listen to concerns about decisions", "Adjust approach based on feedback", "Track team morale and adjust accordingly"],
-    ["Notice gaps in progress", "Ensure goals are met precisely", "Spot inconsistencies in analysis", "Identify risks in decisions", "Adapt to unexpected shifts in project details", "Refine project details for clarity"],
-    ["Find new solutions to problems", "Innovate ways to achieve goals", "Design strategies to tackle challenges", "Innovate decision-making processes", "Adjust plans as circumstances change", "Implement innovative project strategies"],
-    ["Collaborate toward success", "Lead by example, driving the team", "Encourage others to think critically", "Coordinate decisions within the team", "Foster flexibility in team roles", "Ensure everyone works together toward the goal"]
+    ["Present solutions to complex problems", "Explain complex concepts clearly", "Share innovative ideas", "Communicate the decision-making process", "Adapt messages based on progress", "Keep the team aligned through communication"],
+    ["Write detailed solutions", "Document the analysis process", "Create innovative proposals", "Write decisions based on analysis", "Revise strategies as new challenges arise", "Write a step-by-step project plan"],
+    ["Listen for practical feedback", "Pay attention to critical arguments", "Absorb innovative ideas", "Listen for decision-making cues", "Adjust project based on new feedback", "Adapt project flow based on team feedback"],
+    ["Spot potential obstacles", "Recognize flaws in systems", "Identify opportunities in constraints", "Detect flaws in decision-making processes", "Notice subtle shifts in project progress", "Refine project steps with precision"],
+    ["Create efficient solutions", "Apply critical thinking to innovation", "Drive groundbreaking ideas", "Innovate with clear decision-making models", "Adapt innovations for unexpected changes", "Drive innovation throughout the project"],
+    ["Work with the team to find solutions", "Guide team through critical analysis", "Encourage innovation within the team", "Lead the team in decision-making", "Guide the team to adapt quickly", "Manage project team through obstacles"]
 ];
 
-export default function AdvancersBingoCard() {
+export default function FixersBingoCard() {
     const router = useRouter();
     const [checked, setChecked] = useState<Set<string>>(new Set());
     const [showPopup, setShowPopup] = useState(false);
@@ -36,15 +36,15 @@ export default function AdvancersBingoCard() {
 
     return (
         <div className="min-h-screen bg-black text-white p-6">
-            <h1 className="text-2xl font-bold mb-4 text-center">🏅 Advancers (The Hero)</h1>
+            <h1 className="text-2xl font-bold mb-4 text-center">⚙️ Fixers (The Engineer/Alchemist)</h1>
             <div className="overflow-x-auto">
                 <table className="w-[80%] mx-auto table-fixed border-collapse">
                     <thead>
                         <tr className="bg-gray-800">
                             <th className="w-1/6 p-2 border border-gray-600">Skill/Task</th>
                             <th className="p-2 border border-gray-600">Problem Solving</th>
-                            <th className="p-2 border border-gray-600">Leadership</th>
                             <th className="p-2 border border-gray-600">Critical Thinking</th>
+                            <th className="p-2 border border-gray-600">Innovation</th>
                             <th className="p-2 border border-gray-600">Decision Making</th>
                             <th className="p-2 border border-gray-600">Adaptability</th>
                             <th className="p-2 border border-gray-600">Project Management</th>

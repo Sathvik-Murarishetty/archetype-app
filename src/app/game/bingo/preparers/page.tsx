@@ -5,15 +5,15 @@ import Confetti from "react-confetti";
 import { useRouter } from "next/navigation";
 
 const skills = [
-    ["Present solutions with confidence", "Inspire team to reach goals", "Lead goal-oriented discussions", "Communicate decisions clearly", "Adapt messages based on progress", "Keep the team motivated through communication"],
-    ["Write goal-driven plans", "Document success stories", "Analyze progress in writing", "Write a persuasive plan", "Revise strategies based on feedback", "Write a clear project update"],
-    ["Listen to feedback on progress", "Hear team’s aspirations", "Listen for insights on strategy", "Listen to concerns about decisions", "Adjust approach based on feedback", "Track team morale and adjust accordingly"],
-    ["Notice gaps in progress", "Ensure goals are met precisely", "Spot inconsistencies in analysis", "Identify risks in decisions", "Adapt to unexpected shifts in project details", "Refine project details for clarity"],
-    ["Find new solutions to problems", "Innovate ways to achieve goals", "Design strategies to tackle challenges", "Innovate decision-making processes", "Adjust plans as circumstances change", "Implement innovative project strategies"],
-    ["Collaborate toward success", "Lead by example, driving the team", "Encourage others to think critically", "Coordinate decisions within the team", "Foster flexibility in team roles", "Ensure everyone works together toward the goal"]
+    ["Explain solutions with clarity", "Provide clear rationales", "Communicate with precision", "Share research findings with accuracy", "Present innovative ideas thoughtfully", "Communicate project details with precision"],
+    ["Draft detailed problem-solving documents", "Write logical essays", "Document findings with accuracy", "Write research papers or reports", "Compose thoughtful proposals", "Draft clear project guidelines"],
+    ["Listen for intricate details", "Analyze information deeply", "Pick up on fine details in discussions", "Listen attentively to research feedback", "Adjust approach based on research findings", "Listen for accuracy during project reviews"],
+    ["Notice fine points in problems", "Spot inconsistencies in data", "Focus on the smallest details", "Research thoroughly to ensure accuracy", "Innovate through precise adjustments", "Maintain meticulous project documentation"],
+    ["Solve problems with precision", "Develop thoughtful ideas", "Innovate with a focus on detail", "Apply knowledge creatively", "Integrate new findings into processes", "Innovate with careful planning and execution"],
+    ["Collaborate through knowledge sharing", "Share critical perspectives", "Offer detailed advice to the team", "Contribute research insights", "Lead the team with expertise", "Ensure the team maintains focus on detail"]
 ];
 
-export default function AdvancersBingoCard() {
+export default function PreparersBingoCard() {
     const router = useRouter();
     const [checked, setChecked] = useState<Set<string>>(new Set());
     const [showPopup, setShowPopup] = useState(false);
@@ -36,17 +36,17 @@ export default function AdvancersBingoCard() {
 
     return (
         <div className="min-h-screen bg-black text-white p-6">
-            <h1 className="text-2xl font-bold mb-4 text-center">🏅 Advancers (The Hero)</h1>
+            <h1 className="text-2xl font-bold mb-4 text-center">📚 Preparers (The Sage)</h1>
             <div className="overflow-x-auto">
                 <table className="w-[80%] mx-auto table-fixed border-collapse">
                     <thead>
                         <tr className="bg-gray-800">
                             <th className="w-1/6 p-2 border border-gray-600">Skill/Task</th>
                             <th className="p-2 border border-gray-600">Problem Solving</th>
-                            <th className="p-2 border border-gray-600">Leadership</th>
                             <th className="p-2 border border-gray-600">Critical Thinking</th>
-                            <th className="p-2 border border-gray-600">Decision Making</th>
-                            <th className="p-2 border border-gray-600">Adaptability</th>
+                            <th className="p-2 border border-gray-600">Attention to Detail</th>
+                            <th className="p-2 border border-gray-600">Research</th>
+                            <th className="p-2 border border-gray-600">Innovation</th>
                             <th className="p-2 border border-gray-600">Project Management</th>
                         </tr>
                     </thead>
@@ -54,14 +54,7 @@ export default function AdvancersBingoCard() {
                         {skills.map((row, rowIndex) => (
                             <tr key={rowIndex}>
                                 <td className="font-semibold text-sm p-2 border border-gray-600 bg-gray-800">
-                                    {[
-                                        "Communication",
-                                        "Writing",
-                                        "Listening",
-                                        "Attention to Detail",
-                                        "Innovation",
-                                        "Teamwork"
-                                    ][rowIndex]}
+                                    {["Communication", "Writing", "Listening", "Attention to Detail", "Innovation", "Teamwork"][rowIndex]}
                                 </td>
                                 {row.map((item, colIndex) => (
                                     <td
