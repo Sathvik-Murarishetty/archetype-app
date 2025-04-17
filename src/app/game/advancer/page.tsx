@@ -6,11 +6,19 @@ import Image from "next/image";
 
 const answers = ["E", "B", "C", "E", "B"];
 const imagePaths = [
-    "/abstract 1.webp",
-    "/abstract 2.webp",
-    "/abstract 3.webp",
-    "/abstract 4.webp",
-    "/abstract 5.webp",
+    "/advancer/1.webp",
+    "/advancer/2.webp",
+    "/advancer/3.webp",
+    "/advancer/4.webp",
+    "/advancer/5.webp",
+];
+
+const questions = [
+    "Which shape comes next in the sequence?",
+    "Complete the sequence.",
+    "Complete the sequence.",
+    "Which is the odd string of letters out?",
+    "Complete the sequence."
 ];
 
 export default function AdvancerGame() {
@@ -39,7 +47,7 @@ export default function AdvancerGame() {
                 if (level === 4) {
                     const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
                     localStorage.setItem("Advancer", totalTime.toString());
-                    router.push("/game/");
+                    router.push("/");
                 } else {
                     setLevel((prev) => prev + 1);
                     setSelected(null);
@@ -119,6 +127,7 @@ export default function AdvancerGame() {
             </div>
 
             <div className="w-full max-w-lg text-center p-6 border rounded-xl shadow mb-6">
+                <h2 className="text-lg font-bold text-black mb-2">{questions[level]}</h2>
                 <Image
                     src={imagePaths[level]}
                     alt={`Level ${level + 1}`}
@@ -131,9 +140,11 @@ export default function AdvancerGame() {
                         <button
                             key={opt}
                             onClick={() => handleAnswer(opt)}
-                            className={`w-12 h-12 rounded-full text-lg font-bold border-2 transition-all duration-300 ${selected === opt ? "bg-green-500 text-white" :
-                                    wrong === opt ? "bg-red-500 text-white" :
-                                        "bg-white text-black border-gray-300 hover:bg-gray-100"
+                            className={`w-12 h-12 rounded-full text-lg font-bold border-2 transition-all duration-300 ${selected === opt
+                                    ? "bg-green-500 text-white"
+                                    : wrong === opt
+                                        ? "bg-red-500 text-white"
+                                        : "bg-white text-black border-gray-300 hover:bg-gray-100"
                                 }`}
                             disabled={!!selected}
                         >
