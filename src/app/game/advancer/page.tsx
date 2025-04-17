@@ -6,11 +6,11 @@ import Image from "next/image";
 
 const answers = ["E", "B", "C", "E", "B"];
 const imagePaths = [
-    "/advancer/1.webp",
-    "/advancer/2.webp",
-    "/advancer/3.webp",
-    "/advancer/4.webp",
-    "/advancer/5.webp",
+    "/abstract 1.webp",
+    "/abstract 2.webp",
+    "/abstract 3.webp",
+    "/abstract 4.webp",
+    "/abstract 5.webp",
 ];
 
 const questions = [
