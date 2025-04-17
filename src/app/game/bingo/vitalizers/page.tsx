@@ -35,38 +35,31 @@ export default function VitalizersBingoCard() {
     };
 
     return (
-        <div className="min-h-screen bg-white p-6">
-            <h1 className="text-2xl font-bold mb-4 text-center text-black">✨ Vitalizers (The Social Leader)</h1>
+        <div className="min-h-screen bg-black text-white p-6">
+            <h1 className="text-2xl font-bold mb-4 text-center">✨ Vitalizers (The Social Leader)</h1>
             <div className="overflow-x-auto">
-                <table className="w-full table-fixed border-collapse">
+                <table className="w-[80%] mx-auto table-fixed border-collapse">
                     <thead>
-                        <tr className="bg-gray-100">
-                            <th className="w-1/6 p-2 border">Skill/Task</th>
-                            <th className="p-2 border">Leadership</th>
-                            <th className="p-2 border">Teamwork</th>
-                            <th className="p-2 border">Emotional Intelligence</th>
-                            <th className="p-2 border">Problem Solving</th>
-                            <th className="p-2 border">Communication</th>
-                            <th className="p-2 border">Project Management</th>
+                        <tr className="bg-gray-800">
+                            <th className="w-1/6 p-2 border border-gray-600">Skill/Task</th>
+                            <th className="p-2 border border-gray-600">Leadership</th>
+                            <th className="p-2 border border-gray-600">Teamwork</th>
+                            <th className="p-2 border border-gray-600">Emotional Intelligence</th>
+                            <th className="p-2 border border-gray-600">Problem Solving</th>
+                            <th className="p-2 border border-gray-600">Communication</th>
+                            <th className="p-2 border border-gray-600">Project Management</th>
                         </tr>
                     </thead>
                     <tbody>
                         {skills.map((row, rowIndex) => (
                             <tr key={rowIndex}>
-                                <td className="font-semibold text-sm p-2 border bg-gray-50">
-                                    {[
-                                        "Writing",
-                                        "Listening",
-                                        "Attention to Detail",
-                                        "Innovation",
-                                        "Communication",
-                                        "Project Management"
-                                    ][rowIndex]}
+                                <td className="font-semibold text-sm p-2 border border-gray-600 bg-gray-800">
+                                    {["Writing", "Listening", "Attention to Detail", "Innovation", "Communication", "Project Management"][rowIndex]}
                                 </td>
                                 {row.map((item, colIndex) => (
                                     <td
                                         key={colIndex}
-                                        className={`p-2 border text-sm cursor-pointer ${checked.has(item) ? "bg-gray-300 opacity-60" : "bg-white hover:bg-green-100"}`}
+                                        className={`p-2 border border-gray-600 text-sm cursor-pointer ${checked.has(item) ? "bg-gray-600 opacity-60" : "bg-gray-900 hover:bg-green-700"}`}
                                         onClick={() => toggleCheck(item)}
                                     >
                                         <label className="flex items-start gap-2">
