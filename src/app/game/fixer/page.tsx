@@ -44,20 +44,20 @@ const levelConfigs = [
     },
     {
         blue: [
-            { row: 0, col: 3 },
-            { row: 1, col: 5 },
+            { row: 0, col: 5 },
+            { row: 4, col: 3 },
         ],
         yellow: [
-            { row: 0, col: 5 },
-            { row: 2, col: 3 },
+            { row: 2, col: 1 },
+            { row: 3, col: 5 },
         ],
         red: [
             { row: 2, col: 2 },
             { row: 4, col: 4 },
         ],
         green: [
-            { row: 1, col: 3 },
-            { row: 4, col: 3 },
+            { row: 4, col: 1 },
+            { row: 3, col: 3 },
         ],
     },
 ];
@@ -67,24 +67,7 @@ export default function FixerGame() {
     const [level, setLevel] = useState(0);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [currentTime, setCurrentTime] = useState(0);
-    const [countdown, setCountdown] = useState(3);
-    const [showCountdown, setShowCountdown] = useState(true);
-
-    useEffect(() => {
-        if (!showCountdown) return;
-
-        const interval = setInterval(() => {
-            setCountdown((prev) => prev - 1);
-        }, 1000);
-
-        if (countdown === 0) {
-            clearInterval(interval);
-            setShowCountdown(false);
-            setStartTime(Date.now());
-        }
-
-        return () => clearInterval(interval);
-    }, [countdown, showCountdown]);
+    const [showIntro, setShowIntro] = useState(true);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -105,19 +88,60 @@ export default function FixerGame() {
                 localStorage.setItem("Fixer", totalTime.toString());
                 router.push("/");
             }
-        }, 500); // slight delay to let success state render
+        }, 500);
     };
+
+    if (showIntro) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg text-center md:w-[650px]">
+                    <h2 className="text-2xl font-bold mb-2 text-black">Fixers</h2>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-700">The GlitchHunters</h3>
+                    <div className="flex items-start gap-4 mb-4 text-left">
+                        <Image src="/fixers.png" alt="emoji" width={90} height={90} />
+                        <p className="text-sm text-gray-700">
+                            GlitchHunters are problem-seekers and solvers. Their joy lies in decoding chaos,
+                            whether it’s fixing broken bikes, websites, or workflows. If something’s off,
+                            they notice it first. They’re not here for vibes, they’re here for precision.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-4 text-left">
+                        <div>
+                            <p className="text-sm font-bold text-black">STRENGTHS</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Analytical and resourceful</li>
+                                <li>Focused under pressure</li>
+                                <li>Excellent with systems and tech</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-black">WEAKNESSES</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Gets frustrated with ambiguity or messy learners</li>
+                                <li>Can over-engineer simple problems</li>
+                                <li>May undervalue emotional/contextual learning</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p className="italic text-sm text-black mb-4">
+                        “If it’s broken, it’s just waiting for me.”
+                    </p>
+                    <button
+                        onClick={() => {
+                            setShowIntro(false);
+                            setStartTime(Date.now());
+                        }}
+                        className="bg-black text-white px-4 py-2 rounded"
+                    >
+                        Proceed
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="relative min-h-screen flex flex-col items-center bg-white px-6 pt-10">
-            {showCountdown && (
-                <div className="absolute inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-                    <div className="text-white text-6xl font-bold animate-pulse">
-                        {countdown > 0 ? countdown : "Go!"}
-                    </div>
-                </div>
-            )}
-
             <div className="w-full max-w-xl mb-4 text-center">
                 <p className="text-3xl font-medium text-black">Fixer Archetype</p>
             </div>

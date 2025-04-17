@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { HsvColorPicker, HsvColor } from "react-colorful";
+import Image from "next/image";
 
 const prompts = [
     {
@@ -63,10 +64,7 @@ export default function FlourishersGame() {
     const [vibe, setVibe] = useState("");
     const [bonus, setBonus] = useState("");
     const [error, setError] = useState("");
-
-    useEffect(() => {
-        setStartTime(Date.now());
-    }, []);
+    const [showIntro, setShowIntro] = useState(true);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -99,6 +97,54 @@ export default function FlourishersGame() {
             router.push("/");
         }
     };
+
+    if (showIntro) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg text-center md:w-[650px]">
+                    <h2 className="text-2xl font-bold mb-2 text-black">Flourishers</h2>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-700">The SoulCrafters</h3>
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
+                        <Image src="/flourishers.png" alt="emoji" width={120} height={120} />
+                        <p className="text-sm text-gray-700 text-left">
+                            SoulCrafters learn with feeling. Their education is deeply personal, woven into their identity, culture, and emotions.
+                            They journal, reflect, and craft their truth through every lesson. For them, learning is transformation.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-4 text-left">
+                        <div>
+                            <p className="text-sm font-bold text-black">STRENGTHS</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Deep thinkers and emotionally expressive</li>
+                                <li>Amazing storytellers and communicators</li>
+                                <li>Learns through lived experience</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-black">WEAKNESSES</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Mood can affect consistency</li>
+                                <li>Needs purpose to stay engaged</li>
+                                <li>Feels everything (the good and bad) intensely</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p className="italic text-sm text-black mb-4">
+                        “Every idea lives in my bones now.”
+                    </p>
+                    <button
+                        onClick={() => {
+                            setShowIntro(false);
+                            setStartTime(Date.now());
+                        }}
+                        className="bg-black text-white px-4 py-2 rounded"
+                    >
+                        Proceed
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-white px-6 py-10">

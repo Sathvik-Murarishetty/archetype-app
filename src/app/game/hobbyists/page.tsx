@@ -18,27 +18,10 @@ export default function HobbyistsGame() {
     const [level, setLevel] = useState(1);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [currentTime, setCurrentTime] = useState(0);
-    const [countdown, setCountdown] = useState(3);
-    const [showCountdown, setShowCountdown] = useState(true);
-    const [canProceed, setCanProceed] = useState(false);
+    const [showIntro, setShowIntro] = useState(true);
     const [showPrompt, setShowPrompt] = useState(true);
     const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (!showCountdown || showPrompt) return;
-
-        const interval = setInterval(() => {
-            setCountdown((prev) => prev - 1);
-        }, 1000);
-
-        if (countdown === 0) {
-            clearInterval(interval);
-            setShowCountdown(false);
-            setStartTime(Date.now());
-        }
-
-        return () => clearInterval(interval);
-    }, [countdown, showCountdown, showPrompt]);
+    const [canProceed, setCanProceed] = useState(false);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -63,33 +46,77 @@ export default function HobbyistsGame() {
         }
     };
 
+    if (showIntro) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg text-center md:w-[650px]">
+                    <div className="flex flex-col md:flex-row md:items-start md:text-left md:space-x-6">
+                        <Image src="/hobbyists.png" alt="emoji" width={120} height={120} className="mx-auto md:mx-0" />
+                        <div>
+                            <h2 className="text-2xl font-bold mb-1 text-black">Hobbyists</h2>
+                            <h3 className="text-lg font-semibold mb-3 text-gray-700">The VibeCatchers</h3>
+                            <p className="text-sm text-gray-700 mb-4">
+                                VibeCatchers chase curiosity like it&apos;s a firefly in a jar. They&apos;re driven by spark, not structure. Aesthetic learners who jump from hobby to hobby, they turn the act of learning into a lifestyle. One week it&apos;s Korean skincare science, next week it&apos;s 3D modeling.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mt-4 mb-4 text-left">
+                        <div>
+                            <p className="text-sm font-bold text-black">STRENGTHS</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Hyper-curious and self-starting</li>
+                                <li>Creative and exploratory</li>
+                                <li>Fast to pick up new skills</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-black">WEAKNESSES</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Struggles with discipline or long-term commitment</li>
+                                <li>Easily distracted by the next “shiny thing”</li>
+                                <li>Might not master depth</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p className="italic text-sm text-black mb-4">
+                        “I learn for the plot.”
+                    </p>
+                    <button
+                        onClick={() => {
+                            setShowIntro(false);
+                            setStartTime(Date.now());
+                        }}
+                        className="bg-black text-white px-4 py-2 rounded"
+                    >
+                        Proceed
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="relative min-h-screen flex flex-col items-center bg-white px-6 pt-10">
-            {(showCountdown || showPrompt) && (
+            {showPrompt && (
                 <div className="absolute inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-                    {showPrompt ? (
-                        <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-md">
-                            <h2 className="text-xl font-bold mb-4 text-black">Choose what to draw:</h2>
-                            <div className="flex flex-col gap-3">
-                                {prompts[level - 1].map((prompt, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => {
-                                            setSelectedPrompt(prompt);
-                                            setShowPrompt(false);
-                                        }}
-                                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                    >
-                                        {prompt}
-                                    </button>
-                                ))}
-                            </div>
+                    <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-md">
+                        <h2 className="text-xl font-bold mb-4 text-black">Choose what to draw:</h2>
+                        <div className="flex flex-col gap-3">
+                            {prompts[level - 1].map((prompt, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => {
+                                        setSelectedPrompt(prompt);
+                                        setShowPrompt(false);
+                                    }}
+                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                >
+                                    {prompt}
+                                </button>
+                            ))}
                         </div>
-                    ) : (
-                        <div className="text-white text-6xl font-bold animate-pulse">
-                            {countdown > 0 ? countdown : "Go!"}
-                        </div>
-                    )}
+                    </div>
                 </div>
             )}
 
@@ -120,11 +147,11 @@ export default function HobbyistsGame() {
             </div>
 
             <button
-                disabled={!canProceed || showCountdown || showPrompt}
+                disabled={!canProceed || showPrompt}
                 onClick={nextLevel}
-                className={`px-6 py-3 rounded-lg transition ${!canProceed || showCountdown || showPrompt
-                        ? "bg-gray-400 text-white cursor-not-allowed"
-                        : "bg-green-600 text-white hover:bg-green-700"
+                className={`px-6 py-3 rounded-lg transition ${!canProceed || showPrompt
+                    ? "bg-gray-400 text-white cursor-not-allowed"
+                    : "bg-green-600 text-white hover:bg-green-700"
                     }`}
             >
                 {level === 5 ? "Complete" : "Next Level"}

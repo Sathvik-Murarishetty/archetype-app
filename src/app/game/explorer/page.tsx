@@ -1,176 +1,226 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { HsvColorPicker, HsvColor } from "react-colorful";
 import Image from "next/image";
 
-// native size of IMG_0372‑1.png + item PNGs
-const IMG_W = 1199;
-const IMG_H = 1598;
-const TOTAL_ITEMS = 30;
+const prompts = [
+    {
+        icon: "🎶",
+        title: "The Dreamy Sunset Moment",
+        colorLabel: "Choose a color that represents the fading light of the day.",
+        songLabel: "Choose a song that matches the vibe of a calm, peaceful evening.",
+        vibeLabel: "Name the vibe: What would you call this moment?",
+        bonusLabel: "Bonus: Add a short description or an emoji to describe the scene.",
+        songs: ["sunset1.mp3", "sunset2.mp3", "sunset3.mp3", "sunset4.mp3", "sunset5.mp3", "sunset6.mp3"]
+    },
+    {
+        icon: "🌿",
+        title: "The Nature Escape",
+        colorLabel: "Choose a color that reflects the greenery and serenity of nature.",
+        songLabel: "Choose a song that evokes the sounds of birds, wind, and leaves rustling.",
+        vibeLabel: "Name the vibe: What would you call this peaceful nature retreat?",
+        bonusLabel: "Bonus: Create a mood with a short phrase or an emoji.",
+        songs: ["nature1.mp3", "nature2.mp3", "nature3.mp3", "nature4.mp3", "nature5.mp3", "nature6.mp3"]
+    },
+    {
+        icon: "🌌",
+        title: "The Starry Night Adventure",
+        colorLabel: "Choose a color that represents the deep, mysterious sky at night.",
+        songLabel: "Choose a song that gives you the feeling of being on a quiet adventure under the stars.",
+        vibeLabel: "Name the vibe: How would you describe the feeling of this adventure?",
+        bonusLabel: "Bonus: Add a phrase or emoji to enhance the experience.",
+        songs: ["stars1.mp3", "stars2.mp3", "stars3.mp3", "stars4.mp3", "stars5.mp3", "stars6.mp3"]
+    },
+    {
+        icon: "☕",
+        title: "The Cozy Café Corner",
+        colorLabel: "Choose a color that gives off warm, cozy, and inviting vibes.",
+        songLabel: "Choose a song that feels like the soundtrack to sipping coffee with a book in hand.",
+        vibeLabel: "Name the vibe: What would you call this relaxing moment?",
+        bonusLabel: "Bonus: Write a short description of the scene or use an emoji.",
+        songs: ["cafe1.mp3", "cafe2.mp3", "cafe3.mp3", "cafe4.mp3", "cafe5.mp3", "cafe6.mp3"]
+    },
+    {
+        icon: "🛸",
+        title: "The Late-Night Drive",
+        colorLabel: "Choose a color that represents the feel of driving through empty streets at night.",
+        songLabel: "Choose a song that matches the quiet, introspective nature of a late-night drive.",
+        vibeLabel: "Name the vibe: What would you call the mood of this drive?",
+        bonusLabel: "Bonus: Add a phrase or emoji that fits the atmosphere.",
+        songs: ["drive1.mp3", "drive2.mp3", "drive3.mp3", "drive4.mp3", "drive5.mp3", "drive6.mp3"]
+    }
+];
 
-/* ── groups shown under the progress bar ─────────────── */
-const CATEGORIES = [
-    { name: "Cactus", start: 2, end: 12, thumb: "/thumbs/Cactus.png" },
-    { name: "Grass", start: 13, end: 18, thumb: "/thumbs/Grass.png" },
-    { name: "Flower", start: 19, end: 23, thumb: "/thumbs/Flower.png" },
-    { name: "Haystack", start: 24, end: 31, thumb: "/thumbs/Haystack.png" },
-] as const;
-
-export default function ExplorerGame() {
+export default function FlourishersGame() {
     const router = useRouter();
-    const [found, setFound] = useState<Set<string>>(new Set());
+    const [level, setLevel] = useState(0);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [currentTime, setCurrentTime] = useState(0);
-    const [countdown, setCountdown] = useState(3);
-    const [showCountdown, setShowCountdown] = useState(true);
+    const [responses, setResponses] = useState<{ color: HsvColor; song: string; vibe: string; bonus: string }[]>([]);
+    const [color, setColor] = useState<HsvColor>({ h: 30, s: 0.5, v: 0.9 });
+    const [song, setSong] = useState("");
+    const [vibe, setVibe] = useState("");
+    const [bonus, setBonus] = useState("");
+    const [error, setError] = useState("");
+    const [showIntro, setShowIntro] = useState(true);
 
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
-
-    /* countdown */
     useEffect(() => {
-        if (!showCountdown) return;
-        const id = setInterval(() => setCountdown((c) => c - 1), 1000);
-        if (countdown === 0) {
-            clearInterval(id);
-            setShowCountdown(false);
-            setStartTime(Date.now());
+        setStartTime(Date.now());
+    }, []);
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (startTime) {
+            timer = setInterval(() => {
+                setCurrentTime(Math.floor((Date.now() - startTime) / 1000));
+            }, 1000);
         }
-        return () => clearInterval(id);
-    }, [countdown, showCountdown]);
-
-    /* timer */
-    useEffect(() => {
-        if (!startTime) return;
-        const id = setInterval(
-            () => setCurrentTime(Math.floor((Date.now() - startTime) / 1000)),
-            1000
-        );
-        return () => clearInterval(id);
+        return () => clearInterval(timer);
     }, [startTime]);
 
-    /* click detection */
-    const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const x = ((e.clientX - rect.left) * IMG_W) / rect.width;
-        const y = ((e.clientY - rect.top) * IMG_H) / rect.height;
-
-        const ctx = canvas.getContext("2d")!;
-        for (const img of imageRefs.current) {
-            if (!img || found.has(img.alt)) continue;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            if (ctx.getImageData(x, y, 1, 1).data[3] > 10) {
-                setFound((prev) => new Set(prev).add(img.alt));
-                break;
-            }
+    const handleNext = () => {
+        if (!song || !vibe.trim() || !color) {
+            setError("Please select a color, a song, and name the vibe before proceeding.");
+            return;
+        }
+        setError("");
+        const newResponse = { color, song, vibe, bonus };
+        const updatedResponses = [...responses, newResponse];
+        setResponses(updatedResponses);
+        setColor({ h: 30, s: 0.5, v: 0.9 });
+        setSong("");
+        setVibe("");
+        setBonus("");
+        if (level < prompts.length - 1) {
+            setLevel((prev) => prev + 1);
+        } else {
+            const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
+            localStorage.setItem("Flourishers", totalTime.toString());
+            router.push("/");
         }
     };
 
-    /* finish */
-    useEffect(() => {
-        if (found.size === TOTAL_ITEMS) {
-            const total = startTime ? (Date.now() - startTime) / 1000 : 0;
-            localStorage.setItem("Explorer", total.toString());
-            router.push("/");
-        }
-    }, [found, startTime, router]);
-
-    /* per‑category progress */
-    /* per‑category progress */
-    const categoryState = useMemo(() =>
-        CATEGORIES.map((cat) => {
-            const ids = Array.from(
-                { length: cat.end - cat.start + 1 },
-                (_, i) => `IMG_0372-${cat.start + i}.png`
-            );
-            return {
-                name: cat.name,
-                total: ids.length,
-                found: ids.filter((id) => found.has(id)).length,
-                thumb: cat.thumb ?? `/${ids[0]}`,   // <-- use custom thumb if provided
-            };
-        }),
-        [found]);
-
+    if (showIntro) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg text-center md:w-[650px]">
+                    <div className="flex gap-6 flex-col md:flex-row md:items-center text-left">
+                        <Image src="/explorer.png" alt="explorer" width={120} height={120} />
+                        <div>
+                            <h2 className="text-2xl font-bold text-black">Explorers <span className="text-gray-500 text-lg">The Wanderminds</span></h2>
+                            <p className="text-sm text-gray-700 mt-2">
+                                Wanderminds follow questions wherever they go. Learning is their adventure, and they collect facts like souvenirs.
+                                They love connecting dots, shifting fields, and discovering random passions.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 my-4 text-left">
+                        <div>
+                            <p className="text-sm font-bold text-black">STRENGTHS</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Exceptionally curious and open-minded</li>
+                                <li>Great at cross-disciplinary thinking</li>
+                                <li>Energetic and inspiring</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-black">WEAKNESSES</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Often leaves projects unfinished</li>
+                                <li>Struggles with focus or follow-through</li>
+                                <li>Can be overwhelmed by options</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p className="italic text-sm text-black mb-4">
+                        “I got lost in a rabbit hole and came out with a PhD in vibes.”
+                    </p>
+                    <button
+                        onClick={() => {
+                            setShowIntro(false);
+                            setStartTime(Date.now());
+                        }}
+                        className="bg-black text-white px-4 py-2 rounded"
+                    >
+                        Proceed
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="relative min-h-screen flex flex-col items-center bg-white px-6 pt-10 pb-10">
-            {/* countdown overlay */}
-            {showCountdown && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-                    <div className="text-white text-6xl font-bold animate-pulse">
-                        {countdown > 0 ? countdown : "Go!"}
-                    </div>
-                </div>
-            )}
-
-            {/* heading */}
-            <div className="w-full max-w-xl mb-4 text-center">
-                <p className="text-3xl font-medium text-black">Explorer Archetype</p>
+        <div className="min-h-screen bg-white px-6 py-10">
+            <div className="text-center mb-6">
+                <h1 className="text-3xl font-bold text-black">Flourishers Archetype</h1>
+                <p className="text-gray-600 text-sm mt-1">Level {level + 1}/5</p>
+                <p className="text-gray-800 text-sm mt-1">Time: {currentTime}s</p>
+                {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
             </div>
 
-            {/* progress bar + timer */}
-            <div className="flex items-center justify-between w-full max-w-xl">
-                <div className="flex-grow bg-gray-200 h-3 rounded-full overflow-hidden mr-4">
-                    <div
-                        className="bg-green-500 h-full transition-all duration-300"
-                        style={{ width: `${(found.size / TOTAL_ITEMS) * 100}%` }}
-                    />
-                </div>
-                <div className="flex items-center">
-                    <Image src="/timer-icon.png" alt="Timer" width={24} height={24} className="mr-2" />
-                    <span className="text-md font-semibold text-black">{currentTime}s</span>
-                </div>
-            </div>
+            <div className="max-w-xl mx-auto bg-gray-50 border rounded-xl p-6">
+                <p className="text-xl font-semibold text-black mb-4">
+                    {prompts[level].icon} {prompts[level].title}
+                </p>
 
-            {/* category thumbs */}
-            <div className="w-full max-w-xl mt-4 grid grid-cols-2 gap-4">
-                {categoryState.map((c) => (
-                    <div key={c.name} className="flex items-center space-x-2">
-                        <Image src={c.thumb} alt={c.name} width={40} height={40} className="rounded border" />
-                        <span className="text-sm font-medium text-black">
-                            {c.name}: {c.found}/{c.total}
-                        </span>
-                    </div>
-                ))}
-            </div>
-
-            {/* game board */}
-            <div
-                className="relative w-full max-w-5xl overflow-hidden mt-6"
-                style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}
-                onClick={handleCanvasClick}
-            >
-                <Image src="/IMG_0372-1.png" alt="Background" fill className="object-contain" />
-
-                {Array.from({ length: TOTAL_ITEMS }, (_, i) => {
-                    const id = `IMG_0372-${i + 2}.png`;
-                    const isFound = found.has(id);
-                    return (
-                        <img
-                            ref={(el) => {
-                                imageRefs.current[i] = el;
-                            }}
-
-                            key={id}
-                            src={`/${id}`}
-                            alt={id}
-                            className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-opacity duration-300"
-                            style={
-                                isFound
-                                    ? { opacity: 0.85, filter: "brightness(0) saturate(100%)" }
-                                    : { opacity: 0 }
-                            }
+                <label className="block mb-4">
+                    <span className="text-black text-sm font-medium">{prompts[level].colorLabel}</span>
+                    <div className="mt-4 flex justify-center">
+                        <HsvColorPicker
+                            color={color}
+                            onChange={setColor}
+                            style={{ width: "220px", height: "220px" }}
                         />
-                    );
-                })}
+                    </div>
+                </label>
 
-                <canvas ref={canvasRef} width={IMG_W} height={IMG_H} className="hidden" />
+                <label className="block mb-4">
+                    <span className="text-black text-sm font-medium">{prompts[level].songLabel}</span>
+                    <div className="grid grid-cols-2 gap-4 mt-2">
+                        {prompts[level].songs.map((songFile, idx) => (
+                            <div
+                                key={idx}
+                                onClick={() => setSong(songFile)}
+                                className={`p-2 border rounded text-black flex flex-col items-center cursor-pointer ${song === songFile ? "bg-green-100 border-green-500" : "bg-white"}`}
+                            >
+                                <audio controls className="w-full mb-1">
+                                    <source src={`/sounds/${songFile}`} type="audio/mpeg" />
+                                </audio>
+                            </div>
+                        ))}
+                    </div>
+                </label>
+
+                <label className="block mb-4">
+                    <span className="text-black text-sm font-medium">{prompts[level].vibeLabel}</span>
+                    <input
+                        type="text"
+                        value={vibe}
+                        onChange={(e) => setVibe(e.target.value)}
+                        className="w-full border p-2 rounded mt-2"
+                        placeholder="Name your vibe..."
+                    />
+                </label>
+
+                <label className="block mb-4">
+                    <span className="text-black text-sm font-medium">{prompts[level].bonusLabel}</span>
+                    <input
+                        type="text"
+                        value={bonus}
+                        onChange={(e) => setBonus(e.target.value)}
+                        className="w-full border p-2 rounded mt-2"
+                        placeholder="Add your mood phrase or emoji..."
+                    />
+                </label>
+
+                <button
+                    onClick={handleNext}
+                    className="mt-4 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+                >
+                    {level === 4 ? "Submit" : "Next"}
+                </button>
             </div>
         </div>
     );

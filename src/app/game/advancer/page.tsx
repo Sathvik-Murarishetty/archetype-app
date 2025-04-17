@@ -20,21 +20,7 @@ export default function AdvancerGame() {
     const [wrong, setWrong] = useState<string | null>(null);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [currentTime, setCurrentTime] = useState(0);
-    const [countdown, setCountdown] = useState(3);
-    const [showCountdown, setShowCountdown] = useState(true);
-
-    useEffect(() => {
-        if (!showCountdown) return;
-        const interval = setInterval(() => {
-            setCountdown((prev) => prev - 1);
-        }, 1000);
-        if (countdown === 0) {
-            clearInterval(interval);
-            setShowCountdown(false);
-            setStartTime(Date.now());
-        }
-        return () => clearInterval(interval);
-    }, [countdown, showCountdown]);
+    const [showIntro, setShowIntro] = useState(true);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -65,16 +51,55 @@ export default function AdvancerGame() {
         }
     };
 
+    if (showIntro) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg text-center md:w-[650px]">
+                    <h2 className="text-2xl font-bold mb-2 text-black">Advancers</h2>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-700">The Upgraders</h3>
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
+                        <Image src="/advancers.png" alt="emoji" width={120} height={120} />
+                        <p className="text-sm text-gray-700 text-left">
+                            Upgraders treat life like a personal development RPG. They don&apos;t just want to grow—they want to level up. Learning is a tool, and mastery is the goal. Courses? Done. Certifications? Framed. They&apos;re motivated by progress.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-4 text-left">
+                        <div>
+                            <p className="text-sm font-bold text-black">STRENGTHS</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>Consistent and ambitious</li>
+                                <li>Self-motivated and fast learners</li>
+                                <li>Performance-focused</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-black">WEAKNESSES</p>
+                            <ul className="text-sm text-gray-700 list-disc list-inside">
+                                <li>May chase goals without passion</li>
+                                <li>Gets impatient with “soft skills”</li>
+                                <li>Can become burnt out by comparison</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p className="italic text-sm text-black mb-4">
+                        “Every day’s a grind to the next badge.”
+                    </p>
+                    <button
+                        onClick={() => {
+                            setShowIntro(false);
+                            setStartTime(Date.now());
+                        }}
+                        className="bg-black text-white px-4 py-2 rounded"
+                    >
+                        Proceed
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="relative min-h-screen flex flex-col items-center bg-white px-6 pt-10">
-            {showCountdown && (
-                <div className="absolute inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-                    <div className="text-white text-6xl font-bold animate-pulse">
-                        {countdown > 0 ? countdown : "Go!"}
-                    </div>
-                </div>
-            )}
-
             <div className="w-full max-w-xl mb-4 text-center">
                 <p className="text-3xl font-medium text-black">Advancer Archetype</p>
             </div>
