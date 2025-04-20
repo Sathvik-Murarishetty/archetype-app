@@ -65,8 +65,7 @@ export default function Home() {
             }
         }
     }, []);
-
-
+    
     /* ── navigation helpers ─────────────────────────── */
     const handleStart = (title: string) => router.push(`/game/${title.toLowerCase()}`);
 
