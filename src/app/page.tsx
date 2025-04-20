@@ -12,8 +12,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black text-white px-6 py-12 flex flex-col items-center">
-      <h1 className="text-4xl font-extrabold text-center mb-2">Skill up & Chill</h1>
-      <p className="text-lg text-gray-300 text-center mb-6">
+      <h1 className="text-6xl font-jaro font-extrabold text-center mb-2">Skill up & Chill</h1>
+      <p className="text-lg text-gray-300 font-jaro text-center mb-6">
         Learn your style. Play your strengths.
       </p>
 

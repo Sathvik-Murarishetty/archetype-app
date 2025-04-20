@@ -4,21 +4,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-const answers = ["E", "B", "C", "E", "B"];
+const answers = ["E", "B", "C", "B"];
 const imagePaths = [
     "/abstract 1.webp",
     "/abstract 2.webp",
     "/abstract 3.webp",
-    "/abstract 4.webp",
     "/abstract 5.webp",
 ];
-
 const questions = [
     "Which shape comes next in the sequence?",
     "Complete the sequence.",
     "Complete the sequence.",
-    "Which is the odd string of letters out?",
-    "Complete the sequence."
+    "Complete the sequence.",
 ];
 
 export default function AdvancerGame() {
@@ -44,7 +41,8 @@ export default function AdvancerGame() {
         if (answers[level] === choice) {
             setSelected(choice);
             setTimeout(() => {
-                if (level === 4) {
+                const isLast = level === answers.length - 1;
+                if (isLast) {
                     const totalTime = startTime ? (Date.now() - startTime) / 1000 : 0;
                     localStorage.setItem("Advancer", totalTime.toString());
                     router.push("/game/");
@@ -59,75 +57,69 @@ export default function AdvancerGame() {
         }
     };
 
-    if (showIntro) {
+      if (showIntro) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-                <div className="bg-white p-6 rounded-lg shadow-lg text-center md:w-[650px]">
-                    <h2 className="text-2xl font-bold mb-2 text-black">Advancers</h2>
-                    <h3 className="text-lg font-semibold mb-4 text-gray-700">The Upgraders</h3>
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
-                        <Image src="/advancers.png" alt="emoji" width={120} height={120} />
-                        <p className="text-sm text-gray-700 text-left">
-                            Upgraders treat life like a personal development RPG. They don&apos;t just want to grow—they want to level up. Learning is a tool, and mastery is the goal. Courses? Done. Certifications? Framed. They&apos;re motivated by progress.
-                        </p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 mb-4 text-left">
-                        <div>
-                            <p className="text-sm font-bold text-black">STRENGTHS</p>
-                            <ul className="text-sm text-gray-700 list-disc list-inside">
-                                <li>Consistent and ambitious</li>
-                                <li>Self-motivated and fast learners</li>
-                                <li>Performance-focused</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold text-black">WEAKNESSES</p>
-                            <ul className="text-sm text-gray-700 list-disc list-inside">
-                                <li>May chase goals without passion</li>
-                                <li>Gets impatient with “soft skills”</li>
-                                <li>Can become burnt out by comparison</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p className="italic text-sm text-black mb-4">
-                        “Every day’s a grind to the next badge.”
-                    </p>
-                    <button
-                        onClick={() => {
-                            setShowIntro(false);
-                            setStartTime(Date.now());
-                        }}
-                        className="bg-black text-white px-4 py-2 rounded"
-                    >
-                        Proceed
-                    </button>
-                </div>
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg text-center w-[90%] max-w-md p-4">
+              <Image
+                src="/advancers-popup.jpg"
+                alt="Preparers Info"
+                width={400}
+                height={300}
+                className="w-full h-auto object-cover rounded-md mb-4"
+              />
+              <button
+                onClick={() => {
+                  setShowIntro(false);
+                  setStartTime(Date.now());
+                }}
+                className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+              >
+                Proceed
+              </button>
             </div>
+          </div>
         );
-    }
+      }
 
     return (
-        <div className="relative min-h-screen flex flex-col items-center bg-white px-6 pt-10">
+        <div className="relative min-h-screen flex flex-col items-center bg-black text-white px-6 pt-10">
             <div className="w-full max-w-xl mb-4 text-center">
-                <p className="text-3xl font-medium text-black">Advancer Archetype</p>
+                <p className="font-jaro text-5xl font-medium text-white">
+                    Advancer Archetype
+                </p>
             </div>
 
             <div className="flex items-center justify-between w-full max-w-xl mb-8">
-                <div className="flex-grow bg-gray-200 h-3 rounded-full overflow-hidden mr-4">
+                <div className="flex-grow bg-gray-700 h-3 rounded-full overflow-hidden mr-4">
                     <div
-                        className="bg-blue-600 h-full transition-all duration-300"
-                        style={{ width: `${((level + 1) / 5) * 100}%` }}
+                        className="bg-blue-500 h-full transition-all duration-300"
+                        style={{
+                            width: `${((level + 1) / questions.length) * 100}%`,
+                        }}
                     />
                 </div>
-                <span className="text-gray-700 text-sm font-semibold">{level + 1}/5</span>
+                <span className="text-gray-300 text-sm font-semibold">
+                    {level + 1}/{questions.length}
+                </span>
                 <div className="flex items-center ml-6">
-                    <Image src="/timer-icon.png" alt="Timer" width={24} height={24} className="mr-2" />
-                    <span className="text-md font-semibold text-black">{currentTime}s</span>
+                    <Image
+                        src="/timer-icon.png"
+                        alt="Timer"
+                        width={24}
+                        height={24}
+                        className="mr-2"
+                    />
+                    <span className="text-md font-semibold text-white">
+                        {currentTime}s
+                    </span>
                 </div>
             </div>
 
-            <div className="w-full max-w-lg text-center p-6 border rounded-xl shadow mb-6">
-                <h2 className="text-lg font-bold text-black mb-2">{questions[level]}</h2>
+            <div className="space-y-2 bg-gray-800 border-white w-full max-w-lg text-center p-6 bg-grey-500 text-black border rounded-xl shadow mb-6">
+                <h2 className="text-lg font-bold text-white mb-2">
+                    {questions[level]}
+                </h2>
                 <Image
                     src={imagePaths[level]}
                     alt={`Level ${level + 1}`}

@@ -30,7 +30,10 @@ export default function Home() {
             const time = localStorage.getItem(title);
             if (time) {
                 const parsed = parseFloat(time);
-                loaded[title] = `${parsed.toFixed(2)} sec`;
+                const minutes = Math.floor(parsed / 60);
+                const seconds = Math.floor(parsed % 60);
+                const formatted = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+                loaded[title] = `${formatted} min`;
                 completed.push({ title, time: parsed });
             } else {
                 loaded[title] = "-- sec";
@@ -57,7 +60,7 @@ export default function Home() {
 
     return (
         <main className="min-h-screen flex flex-col items-center justify-center p-10 bg-white">
-            <h1 className="text-4xl font-bold mb-10 text-black">7 Learning Archetypes</h1>
+            <h1 className="text-5xl font-jaro mb-10 text-black">Learner Archetypes</h1>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {archetypes.slice(0, 4).map((arc) => {
@@ -69,7 +72,7 @@ export default function Home() {
                                 title={
                                     <div className="flex flex-col items-center">
                                         <div
-                                            className="text-xl font-semibold"
+                                            className="text-xl font-semibold font-jaro"
                                             style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
                                         >
                                             {arc.title}
@@ -98,7 +101,7 @@ export default function Home() {
                                 title={
                                     <div className="flex flex-col items-center">
                                         <div
-                                            className="text-xl font-semibold"
+                                            className="text-xl font-semibold font-jaro"
                                             style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
                                         >
                                             {arc.title}

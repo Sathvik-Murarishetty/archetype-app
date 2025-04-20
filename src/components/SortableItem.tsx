@@ -3,7 +3,12 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-export default function SortableItem({ id }: { id: string }) {
+type SortableItemProps = {
+    id: string;
+    className?: string;
+};
+
+export default function SortableItem({ id, className }: SortableItemProps) {
     const {
         attributes,
         listeners,
@@ -25,7 +30,7 @@ export default function SortableItem({ id }: { id: string }) {
             {...attributes}
             {...listeners}
             className={`p-3 rounded border text-black bg-white shadow cursor-grab flex justify-between items-center ${isDragging ? "opacity-50" : ""
-                }`}
+                }${className ?? ""}`}
         >
             <span>{id}</span>
         </div>
