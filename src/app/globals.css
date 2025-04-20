@@ -4,6 +4,7 @@
 /* 2. Import Tailwind v4 (includes base, components, utilities) */
 @import "tailwindcss";
 
+
 /* 3. Define .font-jaro utility (if not configured in tailwind.config.js) */
 @layer utilities {
   .font-jaro {
