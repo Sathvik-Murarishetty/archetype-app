@@ -5,6 +5,15 @@ import { useRouter } from "next/navigation";
 import { SketchPicker } from "react-color";
 import Image from "next/image";
 
+const sounds = [
+    "calm-breeze.mp3",
+    "gentle-waves.mp3",
+    "soft-piano.mp3",
+    "evening-crickets.mp3",
+    "cozy-fireplace.mp3",
+    "midnight-rain.mp3",
+];
+
 const prompts = [
     {
         icon: "🎶",
@@ -13,7 +22,7 @@ const prompts = [
         songLabel: "Choose a song that matches the vibe of a calm, peaceful evening.",
         vibeLabel: "Name the vibe: What would you call this moment?",
         bonusLabel: "Bonus: Add a short description or an emoji to describe the scene.",
-        songs: ["sunset1.mp3", "sunset2.mp3", "sunset3.mp3", "sunset4.mp3", "sunset5.mp3", "sunset6.mp3"],
+        songs: sounds,
     },
     {
         icon: "🌿",
@@ -22,7 +31,7 @@ const prompts = [
         songLabel: "Choose a song that evokes the sounds of birds, wind, and leaves rustling.",
         vibeLabel: "Name the vibe: What would you call this peaceful nature retreat?",
         bonusLabel: "Bonus: Create a mood with a short phrase or an emoji.",
-        songs: ["nature1.mp3", "nature2.mp3", "nature3.mp3", "nature4.mp3", "nature5.mp3", "nature6.mp3"],
+        songs: sounds,
     },
     {
         icon: "🌌",
@@ -31,25 +40,7 @@ const prompts = [
         songLabel: "Choose a song that gives you the feeling of being on a quiet adventure under the stars.",
         vibeLabel: "Name the vibe: How would you describe the feeling of this adventure?",
         bonusLabel: "Bonus: Add a phrase or emoji to enhance the experience.",
-        songs: ["stars1.mp3", "stars2.mp3", "stars3.mp3", "stars4.mp3", "stars5.mp3", "stars6.mp3"],
-    },
-    {
-        icon: "☕",
-        title: "The Cozy Café Corner",
-        colorLabel: "Choose a color that gives off warm, cozy, and inviting vibes.",
-        songLabel: "Choose a song that feels like the soundtrack to sipping coffee with a book in hand.",
-        vibeLabel: "Name the vibe: What would you call this relaxing moment?",
-        bonusLabel: "Bonus: Write a short description of the scene or use an emoji.",
-        songs: ["cafe1.mp3", "cafe2.mp3", "cafe3.mp3", "cafe4.mp3", "cafe5.mp3", "cafe6.mp3"],
-    },
-    {
-        icon: "🚗",
-        title: "The Late-Night Drive",
-        colorLabel: "Choose a color that represents the feel of driving through empty streets at night.",
-        songLabel: "Choose a song that matches the quiet, introspective nature of a late-night drive.",
-        vibeLabel: "Name the vibe: What would you call the mood of this drive?",
-        bonusLabel: "Bonus: Add a phrase or emoji that fits the atmosphere.",
-        songs: ["drive1.mp3", "drive2.mp3", "drive3.mp3", "drive4.mp3", "drive5.mp3", "drive6.mp3"],
+        songs: sounds,
     },
 ];
 
@@ -254,17 +245,6 @@ export default function FlourishersGame() {
                         onChange={(e) => setVibe(e.target.value)}
                         className="w-full border p-2 rounded mt-2 text-white bg-black border-white"
                         placeholder="Name your vibe..."
-                    />
-                </label>
-
-                <label className="block mb-4">
-                    <span className="text-white text-sm font-medium">{prompts[level].bonusLabel}</span>
-                    <input
-                        type="text"
-                        value={bonus}
-                        onChange={(e) => setBonus(e.target.value)}
-                        className="w-full border p-2 rounded mt-2 text-white bg-black border-white"
-                        placeholder="Add your mood phrase or emoji..."
                     />
                 </label>
 
