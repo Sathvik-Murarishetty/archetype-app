@@ -1,39 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import ArchetypeCard from "../../components/ArchetypeCard";
 import Image from "next/image";
-import Confetti from 'react-confetti';
+import Confetti from "react-confetti";
 
+/* ── archetype meta data ───────────────────────────── */
 const archetypes = [
-    { title: "Advancer", description: "Motivated by progress and time-based challenge" },
+    { title: "Advancer", description: "Motivated by progress and time‑based challenge" },
     { title: "Fixer", description: "Solves problems with precision" },
-    { title: "Explorer", description: "Curious, trial-and-error learner" },
+    { title: "Explorer", description: "Curious, trial‑and‑error learner" },
     { title: "Preparers", description: "Plans everything in advance" },
     { title: "Flourishers", description: "Loves creativity and patterns" },
     { title: "Vitalizers", description: "Quick, energetic responder" },
     { title: "Hobbyists", description: "Enjoys learning through play" },
-];
+] as const;
 
+/* ─────────────────────────────────────────────────── */
 export default function Home() {
     const router = useRouter();
+
     const [times, setTimes] = useState<Record<string, string>>({});
     const [fastest, setFastest] = useState<string | null>(null);
     const [subdominant, setSubdominant] = useState<string | null>(null);
+    const [allCompleted, setAllCompleted] = useState(false);   // <‑‑ NEW
 
+    /* ── load completion times on mount ─────────────── */
     useEffect(() => {
         const loaded: Record<string, string> = {};
         const completed: { title: string; time: number }[] = [];
 
         archetypes.forEach(({ title }) => {
-            const time = localStorage.getItem(title);
-            if (time) {
-                const parsed = parseFloat(time);
-                const minutes = Math.floor(parsed / 60);
-                const seconds = Math.floor(parsed % 60);
-                const formatted = `${minutes}:${seconds.toString().padStart(2, "0")}`;
-                loaded[title] = `${formatted} min`;
+            const t = localStorage.getItem(title);
+            if (t) {
+                const parsed = parseFloat(t);
+                const m = Math.floor(parsed / 60);
+                const s = Math.floor(parsed % 60);
+                loaded[title] = `${m}:${s.toString().padStart(2, "0")} min`;
                 completed.push({ title, time: parsed });
             } else {
                 loaded[title] = "-- sec";
@@ -41,6 +45,7 @@ export default function Home() {
         });
 
         setTimes(loaded);
+        setAllCompleted(completed.length === archetypes.length);
 
         if (completed.length === archetypes.length) {
             completed.sort((a, b) => a.time - b.time);
@@ -49,78 +54,90 @@ export default function Home() {
         }
     }, []);
 
-    const handleStart = (title: string) => {
-        router.push(`/game/${title.toLowerCase()}`);
-    };
-
+    /* ── navigation helpers ─────────────────────────── */
+    const handleStart = (title: string) => router.push(`/game/${title.toLowerCase()}`);
     const handleReset = () => {
         archetypes.forEach(({ title }) => localStorage.removeItem(title));
         window.location.reload();
     };
 
+    /* ── tiny util ───────────────────────────────────── */
+    const bingoBtn = (title: string): ReactNode =>
+        allCompleted ? (
+            <button
+                onClick={() => router.push(`/game/bingo/${title.toLowerCase()}`)}
+                className="mt-3 inline-block bg-green-600 text-white px-4 py-2 rounded
+                   hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+            >
+                View&nbsp;your&nbsp;Bingo&nbsp;Card
+            </button>
+        ) : null;
+
+    /* ── card renderer used in both grids ───────────── */
+    const renderCard = (arc: (typeof archetypes)[number]) => {
+        const isCompleted = times[arc.title] !== "-- sec";
+        const isFastest = arc.title === fastest;
+
+        /* front‑face styling identical to original until allCompleted flips true */
+        const containerClass =
+            isCompleted
+                ? allCompleted
+                    ? "bg-white text-white rounded-xl"     // undim when every game done
+                    : "opacity-50"                        // dim while still playing
+                : "bg-white text-white rounded-xl";
+
+        return (
+            <div key={arc.title} className={containerClass}>
+                <ArchetypeCard
+                    /* ── FRONT FACE: unchanged ───────────────── */
+                    title={
+                        <div className="flex flex-col items-center">
+                            <div
+                                className="text-xl font-semibold font-jaro"
+                                style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
+                            >
+                                {arc.title}
+                            </div>
+                            <div className="flex items-center gap-2 text-sm mt-1">
+                                <Image src="/timer-icon.png" alt="timer" width={16} height={16} />
+                                <span>{times[arc.title]}</span>
+                            </div>
+                        </div>
+                    }
+
+                    /* ── BACK FACE: original text + new button ─ */
+                    description={
+                        <div className="flex flex-col items-center text-center">
+                            <p>{arc.description}</p>
+                            {isCompleted && bingoBtn(arc.title)}
+                        </div>
+                    }
+
+
+                    /* disable “Start” button when finished */
+                    onStart={isCompleted ? undefined : () => handleStart(arc.title)}
+                />
+            </div>
+        );
+    };
+
+    /* ──────────────────────────────────────────────── */
     return (
         <main className="min-h-screen flex flex-col items-center justify-center p-10 bg-white">
             <h1 className="text-5xl font-jaro mb-10 text-black">Learner Archetypes</h1>
 
+            {/* first four */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                {archetypes.slice(0, 4).map((arc) => {
-                    const isCompleted = times[arc.title] !== "-- sec";
-                    const isFastest = arc.title === fastest;
-                    return (
-                        <div key={arc.title} className={isCompleted ? "opacity-50" : "bg-white text-white rounded-xl"}>
-                            <ArchetypeCard
-                                title={
-                                    <div className="flex flex-col items-center">
-                                        <div
-                                            className="text-xl font-semibold font-jaro"
-                                            style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
-                                        >
-                                            {arc.title}
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm mt-1">
-                                            <Image src="/timer-icon.png" alt="timer" width={16} height={16} />
-                                            <span>{times[arc.title]}</span>
-                                        </div>
-                                    </div>
-                                }
-                                description={arc.description}
-                                onStart={isCompleted ? undefined : () => handleStart(arc.title)}
-                            />
-                        </div>
-                    );
-                })}
+                {archetypes.slice(0, 4).map(renderCard)}
             </div>
 
+            {/* last three */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-                {archetypes.slice(4).map((arc) => {
-                    const isCompleted = times[arc.title] !== "-- sec";
-                    const isFastest = arc.title === fastest;
-                    return (
-                        <div key={arc.title} className={isCompleted ? "opacity-50" : "bg-white text-white rounded-xl"}>
-                            <ArchetypeCard
-                                title={
-                                    <div className="flex flex-col items-center">
-                                        <div
-                                            className="text-xl font-semibold font-jaro"
-                                            style={{ color: isFastest ? "green" : isCompleted ? "#000000" : undefined }}
-                                        >
-                                            {arc.title}
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm mt-1">
-                                            <Image src="/timer-icon.png" alt="timer" width={16} height={16} />
-                                            <span>{times[arc.title]}</span>
-                                        </div>
-                                    </div>
-                                }
-                                description={arc.description}
-                                onStart={isCompleted ? undefined : () => handleStart(arc.title)}
-                            />
-                        </div>
-                    );
-                })}
+                {archetypes.slice(4).map(renderCard)}
             </div>
 
-            {Object.values(times).every(t => t !== "-- sec") && (
+            {/* reset only when finished */}
+            {allCompleted && (
                 <button
                     onClick={handleReset}
                     className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
@@ -129,15 +146,21 @@ export default function Home() {
                 </button>
             )}
 
+            {/* celebration & modal preserved */}
             {fastest && <Confetti recycle={false} numberOfPieces={400} />}
 
             {fastest && (
-                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white shadow-lg rounded-xl px-10 py-6 text-center scale-150 border border-green-500">
+                <div
+                    className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                     z-50 bg-white shadow-lg rounded-xl px-10 py-6 text-center scale-150
+                     border border-green-500"
+                >
                     <h2 className="text-2xl font-bold text-green-600 mb-2">Your Archetype</h2>
                     <p className="text-lg font-semibold text-black mb-2">{fastest}</p>
                     {subdominant && (
                         <p className="text-sm text-gray-700 mb-4">
-                            Your sub-dominant archetype is <span className="font-semibold text-black">{subdominant}</span>
+                            Your sub-dominant archetype is&nbsp;
+                            <span className="font-semibold text-black">{subdominant}</span>
                         </p>
                     )}
                     <button
