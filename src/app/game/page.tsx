@@ -24,7 +24,9 @@ export default function Home() {
     const [times, setTimes] = useState<Record<string, string>>({});
     const [fastest, setFastest] = useState<string | null>(null);
     const [subdominant, setSubdominant] = useState<string | null>(null);
-    const [allCompleted, setAllCompleted] = useState(false);   // <‑‑ NEW
+
+    const [allCompleted, setAllCompleted] = useState(false);   // have all games finished?
+    const [showPopup, setShowPopup] = useState(false);   // confetti + modal visibility
 
     /* ── load completion times on mount ─────────────── */
     useEffect(() => {
@@ -45,23 +47,34 @@ export default function Home() {
         });
 
         setTimes(loaded);
-        setAllCompleted(completed.length === archetypes.length);
 
-        if (completed.length === archetypes.length) {
+        const finishedAll = completed.length === archetypes.length;
+        setAllCompleted(finishedAll);
+
+        if (finishedAll) {
             completed.sort((a, b) => a.time - b.time);
             setFastest(completed[0].title);
             setSubdominant(completed[1]?.title || null);
+
+            /* ── celebration only once ─────────────────── */
+            const alreadyShown = localStorage.getItem("archetype-shown") === "true";
+            if (!alreadyShown) {
+                setShowPopup(true);
+                localStorage.setItem("archetype-shown", "true");
+            }
         }
     }, []);
 
     /* ── navigation helpers ─────────────────────────── */
     const handleStart = (title: string) => router.push(`/game/${title.toLowerCase()}`);
+
     const handleReset = () => {
         archetypes.forEach(({ title }) => localStorage.removeItem(title));
+        localStorage.removeItem("archetype-shown");   // allow pop‑up again on fresh run
         window.location.reload();
     };
 
-    /* ── tiny util ───────────────────────────────────── */
+    /* ── tiny util: bingo‑card button ───────────────── */
     const bingoBtn = (title: string): ReactNode =>
         allCompleted ? (
             <button
@@ -78,18 +91,17 @@ export default function Home() {
         const isCompleted = times[arc.title] !== "-- sec";
         const isFastest = arc.title === fastest;
 
-        /* front‑face styling identical to original until allCompleted flips true */
         const containerClass =
             isCompleted
                 ? allCompleted
-                    ? "bg-white text-white rounded-xl"     // undim when every game done
-                    : "opacity-50"                        // dim while still playing
+                    ? "bg-white text-white rounded-xl"   // undim when all done
+                    : "opacity-50"                      // dim while still playing
                 : "bg-white text-white rounded-xl";
 
         return (
             <div key={arc.title} className={containerClass}>
                 <ArchetypeCard
-                    /* ── FRONT FACE: unchanged ───────────────── */
+                    /* FRONT FACE */
                     title={
                         <div className="flex flex-col items-center">
                             <div
@@ -105,7 +117,7 @@ export default function Home() {
                         </div>
                     }
 
-                    /* ── BACK FACE: original text + new button ─ */
+                    /* BACK FACE */
                     description={
                         <div className="flex flex-col items-center text-center">
                             <p>{arc.description}</p>
@@ -113,8 +125,6 @@ export default function Home() {
                         </div>
                     }
 
-
-                    /* disable “Start” button when finished */
                     onStart={isCompleted ? undefined : () => handleStart(arc.title)}
                 />
             </div>
@@ -122,21 +132,34 @@ export default function Home() {
     };
 
     /* ──────────────────────────────────────────────── */
+    /** Show hint if:
+     *   1. all games are finished   AND
+     *   2. the celebration pop‑up is NOT showing now
+     */
+    const showHint = allCompleted && !showPopup;
+
     return (
         <main className="min-h-screen flex flex-col items-center justify-center p-10 bg-white">
-            <h1 className="text-5xl font-jaro mb-10 text-black">Learner Archetypes</h1>
+            <h1 className="text-5xl font-jaro mb-6 text-black">Learner Archetypes</h1>
 
-            {/* first four */}
+            {/* hint shown on repeat visits */}
+            {showHint && (
+                <p className="mb-6 text-center text-gray-800 font-medium">
+                    Flip each archetype card to view the Bingo&nbsp;Card.
+                </p>
+            )}
+
+            {/* first four cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {archetypes.slice(0, 4).map(renderCard)}
             </div>
 
-            {/* last three */}
+            {/* last three cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
                 {archetypes.slice(4).map(renderCard)}
             </div>
 
-            {/* reset only when finished */}
+            {/* reset displayed only when every game done */}
             {allCompleted && (
                 <button
                     onClick={handleReset}
@@ -146,10 +169,10 @@ export default function Home() {
                 </button>
             )}
 
-            {/* celebration & modal preserved */}
-            {fastest && <Confetti recycle={false} numberOfPieces={400} />}
+            {/* confetti + modal only first time */}
+            {showPopup && <Confetti recycle={false} numberOfPieces={400} />}
 
-            {fastest && (
+            {showPopup && fastest && (
                 <div
                     className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
                      z-50 bg-white shadow-lg rounded-xl px-10 py-6 text-center scale-150
