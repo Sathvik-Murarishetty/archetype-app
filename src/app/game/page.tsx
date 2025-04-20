@@ -30,6 +30,8 @@ export default function Home() {
 
     /* ── load completion times on mount ─────────────── */
     useEffect(() => {
+        if (typeof window === "undefined") return;
+
         const loaded: Record<string, string> = {};
         const completed: { title: string; time: number }[] = [];
 
@@ -56,7 +58,6 @@ export default function Home() {
             setFastest(completed[0].title);
             setSubdominant(completed[1]?.title || null);
 
-            /* ── celebration only once ─────────────────── */
             const alreadyShown = localStorage.getItem("archetype-shown") === "true";
             if (!alreadyShown) {
                 setShowPopup(true);
@@ -65,14 +66,17 @@ export default function Home() {
         }
     }, []);
 
+
     /* ── navigation helpers ─────────────────────────── */
     const handleStart = (title: string) => router.push(`/game/${title.toLowerCase()}`);
 
     const handleReset = () => {
+        if (typeof window === "undefined") return;
         archetypes.forEach(({ title }) => localStorage.removeItem(title));
-        localStorage.removeItem("archetype-shown");   // allow pop‑up again on fresh run
+        localStorage.removeItem("archetype-shown");
         window.location.reload();
     };
+
 
     /* ── tiny util: bingo‑card button ───────────────── */
     const bingoBtn = (title: string): ReactNode => {
