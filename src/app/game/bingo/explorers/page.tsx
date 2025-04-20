@@ -36,7 +36,8 @@ export default function ExplorersBingoCard() {
 
     return (
         <div className="min-h-screen bg-black text-white p-6">
-            <h1 className="text-2xl font-bold mb-4 text-center">🌍 Explorers (The Seeker)</h1>
+            <h1 className="text-4xl font-bold mb-4 text-center">🌍 Explorers (The Seeker)</h1>
+            <h1 className="text-lg font-bold mb-4 text-center">Complete all the tasks under this archetype to skill up!</h1>
             <div className="overflow-x-auto">
                 <table className="w-[80%] mx-auto table-fixed border-collapse">
                     <thead>
