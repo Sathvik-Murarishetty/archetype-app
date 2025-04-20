@@ -76,14 +76,15 @@ export default function Home() {
 
     /* ── tiny util: bingo‑card button ───────────────── */
     const bingoBtn = (title: string): ReactNode => {
+        if (typeof window === "undefined") return null;
+
         const complete = localStorage.getItem(`${title.toLowerCase()}_complete`) === "true";
 
         return allCompleted ? (
             <button
                 disabled={complete}
                 onClick={() => router.push(`/game/bingo/${title.toLowerCase()}`)}
-                className={`mt-3 inline-block px-4 py-2 rounded font-medium focus:outline-none
-                ${complete
+                className={`mt-3 inline-block px-4 py-2 rounded font-medium focus:outline-none ${complete
                         ? "bg-gray-400 text-white cursor-not-allowed"
                         : "bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-600"
                     }`}
