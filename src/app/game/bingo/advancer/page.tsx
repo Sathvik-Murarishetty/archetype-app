@@ -17,10 +17,34 @@ export default function AdvancersBingoCard() {
     const router = useRouter();
     const [checked, setChecked] = useState<Set<string>>(new Set());
     const [showPopup, setShowPopup] = useState(false);
+    const [complete, setComplete] = useState(false);
 
+    const totalTasks = skills.flat().length;
+
+    // Load progress
     useEffect(() => {
-        const total = skills.flat().length;
-        if (checked.size === total) {
+        const saved = localStorage.getItem("advancer_checked");
+        const completed = localStorage.getItem("advancer_complete");
+        const hasSeenPopup = localStorage.getItem("advancer_popup_seen");
+
+        if (saved) setChecked(new Set(JSON.parse(saved)));
+        if (completed === "true") {
+            setComplete(true);
+            if (!hasSeenPopup) {
+                setTimeout(() => setShowPopup(true), 300);
+                localStorage.setItem("advancer_popup_seen", "true");
+            }
+        }
+    }, []);
+
+    // Save progress
+    useEffect(() => {
+        localStorage.setItem("advancer_checked", JSON.stringify(Array.from(checked)));
+        const isComplete = checked.size === totalTasks;
+        if (isComplete && !complete) {
+            setComplete(true);
+            localStorage.setItem("advancer_complete", "true");
+            localStorage.setItem("advancer_popup_seen", "true");
             setTimeout(() => setShowPopup(true), 300);
         }
     }, [checked]);
@@ -34,10 +58,20 @@ export default function AdvancersBingoCard() {
         });
     };
 
+    const handleReset = () => {
+        localStorage.removeItem("advancer_checked");
+        localStorage.removeItem("advancer_complete");
+        localStorage.removeItem("advancer_popup_seen");
+        setChecked(new Set());
+        setComplete(false);
+        setShowPopup(false);
+    };
+
     return (
         <div className="min-h-screen bg-black text-white p-6">
             <h1 className="text-4xl font-bold mb-4 text-center">🏅 Advancers (The Hero)</h1>
             <h1 className="text-lg font-bold mb-4 text-center">Complete all the tasks under this archetype to skill up!</h1>
+
             <div className="overflow-x-auto">
                 <table className="w-[80%] mx-auto table-fixed border-collapse">
                     <thead>
@@ -55,14 +89,7 @@ export default function AdvancersBingoCard() {
                         {skills.map((row, rowIndex) => (
                             <tr key={rowIndex}>
                                 <td className="font-semibold text-sm p-2 border border-gray-600 bg-gray-800">
-                                    {[
-                                        "Communication",
-                                        "Writing",
-                                        "Listening",
-                                        "Attention to Detail",
-                                        "Innovation",
-                                        "Teamwork"
-                                    ][rowIndex]}
+                                    {["Communication", "Writing", "Listening", "Attention to Detail", "Innovation", "Teamwork"][rowIndex]}
                                 </td>
                                 {row.map((item, colIndex) => (
                                     <td
@@ -80,6 +107,18 @@ export default function AdvancersBingoCard() {
                         ))}
                     </tbody>
                 </table>
+
+                {complete && !showPopup && (
+                    <div className="text-center mb-6">
+                        <button
+                            onClick={handleReset}
+                            className="bg-red-600 text-white px-4 py-2 mt-5 rounded hover:bg-red-700"
+                        >
+                            Reset Progress
+                        </button>
+                    </div>
+                )}
+
             </div>
 
             {showPopup && (

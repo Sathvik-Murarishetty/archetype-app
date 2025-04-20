@@ -17,10 +17,32 @@ export default function FlourishersBingoCard() {
     const router = useRouter();
     const [checked, setChecked] = useState<Set<string>>(new Set());
     const [showPopup, setShowPopup] = useState(false);
+    const [complete, setComplete] = useState(false);
+
+    const totalTasks = skills.flat().length;
 
     useEffect(() => {
-        const total = skills.flat().length;
-        if (checked.size === total) {
+        const saved = localStorage.getItem("flourisher_checked");
+        const completed = localStorage.getItem("flourisher_complete");
+        const hasSeenPopup = localStorage.getItem("flourisher_popup_seen");
+
+        if (saved) setChecked(new Set(JSON.parse(saved)));
+        if (completed === "true") {
+            setComplete(true);
+            if (!hasSeenPopup) {
+                setTimeout(() => setShowPopup(true), 300);
+                localStorage.setItem("flourisher_popup_seen", "true");
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("flourisher_checked", JSON.stringify(Array.from(checked)));
+        const isComplete = checked.size === totalTasks;
+        if (isComplete && !complete) {
+            setComplete(true);
+            localStorage.setItem("flourisher_complete", "true");
+            localStorage.setItem("flourisher_popup_seen", "true");
             setTimeout(() => setShowPopup(true), 300);
         }
     }, [checked]);
@@ -34,10 +56,31 @@ export default function FlourishersBingoCard() {
         });
     };
 
+    const handleReset = () => {
+        localStorage.removeItem("flourisher_checked");
+        localStorage.removeItem("flourisher_complete");
+        localStorage.removeItem("flourisher_popup_seen");
+        setChecked(new Set());
+        setComplete(false);
+        setShowPopup(false);
+    };
+
     return (
         <div className="min-h-screen bg-black text-white p-6">
             <h1 className="text-4xl font-bold mb-4 text-center">🛠️ Flourishers (The Creator)</h1>
             <h1 className="text-lg font-bold mb-4 text-center">Complete all the tasks under this archetype to skill up!</h1>
+
+            {complete && !showPopup && (
+                <div className="text-center mb-6">
+                    <button
+                        onClick={handleReset}
+                        className="bg-red-600 text-white px-4 py-2 mt-4 rounded hover:bg-red-700"
+                    >
+                        Reset Progress
+                    </button>
+                </div>
+            )}
+
             <div className="overflow-x-auto">
                 <table className="w-[80%] mx-auto table-fixed border-collapse">
                     <thead>

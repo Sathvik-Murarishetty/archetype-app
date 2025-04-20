@@ -75,16 +75,24 @@ export default function Home() {
     };
 
     /* ── tiny util: bingo‑card button ───────────────── */
-    const bingoBtn = (title: string): ReactNode =>
-        allCompleted ? (
+    const bingoBtn = (title: string): ReactNode => {
+        const complete = localStorage.getItem(`${title.toLowerCase()}_complete`) === "true";
+
+        return allCompleted ? (
             <button
+                disabled={complete}
                 onClick={() => router.push(`/game/bingo/${title.toLowerCase()}`)}
-                className="mt-3 inline-block bg-green-600 text-white px-4 py-2 rounded
-                   hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className={`mt-3 inline-block px-4 py-2 rounded font-medium focus:outline-none
+                ${complete
+                        ? "bg-gray-400 text-white cursor-not-allowed"
+                        : "bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-600"
+                    }`}
             >
                 View&nbsp;your&nbsp;Bingo&nbsp;Card
             </button>
         ) : null;
+    };
+
 
     /* ── card renderer used in both grids ───────────── */
     const renderCard = (arc: (typeof archetypes)[number]) => {
